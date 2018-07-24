@@ -26,8 +26,8 @@ namespace ConsoleApp5
       Console.WriteLine(ruggle.Name + " " + Emos.Scars);
       Emos todd = new Emos("todd");
       Console.WriteLine(todd.Name + " " + Emos.Scars);
-      Emos modd = new Emos("mooddd");
-      Console.WriteLine(modd.Name + " " + Emos.Scars);
+      todd = new Emos("nodd");
+      Console.WriteLine(todd.Name + " " + Emos.Scars);
     }
   }
 }

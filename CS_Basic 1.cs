@@ -13,7 +13,7 @@ namespace ConsoleApp4
       int x = 12 * 30;
       Console.WriteLine(x);
       string z = Console.ReadLine();
-      int y = Int32.Parse(z);
+      int y = Convert.ToInt32(z);
       Console.WriteLine("Converting " + y + " feet to inches...");
       Console.WriteLine("Feet to inches: "+feet_to_inches(y));
     }
