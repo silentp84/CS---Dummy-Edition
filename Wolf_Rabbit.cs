@@ -41,7 +41,7 @@ namespace ConsoleApp9
        ***rabbit wins when there is no grass left
        ***wolf wins if it kills the rabbit
        */
-
+      int token;
       int[] huntmap = new int[] { 1, 3, 3, 3, 4, 4, 3, 4, 2, 3, 4, 3, 3, 4, 3, 3 }; //initialize board
       Random r = new Random();      //randomize the board
       for (int i = huntmap.Length; i > 0; i--)
@@ -77,17 +77,22 @@ namespace ConsoleApp9
           break;
         }
       }
-      
-      BoardPrint(huntmap,animal);
+
+      if (animal == "W")
+        token = 1;
+      else
+        token = 2;
+
+      BoardPrint(huntmap,token);
 
 
     }
 
     //Display the board and reinterpret the numbers in the array as symbol representations
 
-    static void BoardPrint(int[] hmap, String animal)
+    static void BoardPrint(int[] hmap, int token)
     {
-      //bool symbol;
+      bool symbol;
 
       Dictionary<int, char> dict = new Dictionary<int, char>()
                                 {
@@ -100,8 +105,22 @@ namespace ConsoleApp9
       {
         if (i % 4 == 0 && i != 0)
           Console.Write("\n");
-          //symbol = CheckPosition(hmap, i);
+        symbol = CheckPosition(hmap, i, token);
+        if (symbol == true)
+        {
+          Console.Write(string.Format("{0} ", dict[hmap[i]]));
+        }
+        else
+        {
+          Console.Write("* ");
+        }
+
       }
+
+
+      Console.Write("\n\n");
+
+
       for (int i = 0; i < 16; i++)
       {
         if (i % 4 == 0 && i != 0)
@@ -112,6 +131,58 @@ namespace ConsoleApp9
     }
 
 
+
+    /*CheckPosition
+     * Check to see if the token is within the cell's range and if it is in bounds of the array
+     *If the token piece is "visible" return true so the display knows to display it correctly
+     */
+
+    static bool CheckPosition(int[] map, int position, int token)
+    {
+      bool up = false, down = false, left = false, right = false;
+
+      //check left
+      try
+      {
+        if (map[position - 1] == token && position!= 4 && position != 8 && position != 12)
+          left = true;
+      }
+      catch
+      {
+      }
+
+      //check right
+      try
+      {
+        if (map[position + 1] == token && position != 3 && position != 7 && position != 11)
+          right = true;
+      }
+      catch
+      {
+      }
+
+
+      //check above
+      try
+      {
+        if (map[position - 4] == token)
+          up = true;
+      }
+      catch
+      {
+      }
+
+      //check below
+      try
+      {
+        if (map[position + 4] == token)
+          down = true;
+      }
+      catch
+      {
+      }
+      return (bool)(up==true || down == true || left == true || right == true || map[position]==token);
+    }
 
 
   }
