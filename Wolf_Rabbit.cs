@@ -12,6 +12,7 @@ namespace ConsoleApp9
     {
       public String name;
       public static int rabbits;
+      public int location;
       public Card(string tokenType)
       {
         name = tokenType;
@@ -21,7 +22,7 @@ namespace ConsoleApp9
       {
         rabbits = 1;
       }
-      
+
       public int Add_Rabbit()
       {
         return ++rabbits;
@@ -41,8 +42,7 @@ namespace ConsoleApp9
        ***rabbit wins when there is no grass left
        ***wolf wins if it kills the rabbit
        */
-      int token;
-      int[] huntmap = new int[] { 1, 3, 3, 3, 4, 4, 3, 4, 2, 3, 4, 3, 3, 4, 3, 3 }; //initialize board
+      int[] huntmap = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 }; //initialize board
       Random r = new Random();      //randomize the board
       for (int i = huntmap.Length; i > 0; i--)
       {
@@ -56,7 +56,7 @@ namespace ConsoleApp9
 
       //Select a character either Wolf or Rabbit
 
-      while(animal!="W" && animal != "R")
+      while (animal != "W" && animal != "R")
       {
         Console.Clear();
         Console.WriteLine("**** Wilderness ****");
@@ -64,51 +64,72 @@ namespace ConsoleApp9
         Console.Write("Enter W for Wolf or R for Rabbit:  ");
         animal = Console.ReadLine();
       }
-      
+
       Card wolf = new Card("wolf");
       Card rabbit = new Card("rabbit", 0);
-
-      if (animal == "W")
+      while (wolf.location == rabbit.location)
       {
-        while (true)
-        {
-          //showboard where the wolf only can see
-          
-          break;
-        }
+        wolf.location = r.Next(0, 15);
+        rabbit.location = r.Next(0, 15);
       }
 
-      if (animal == "W")
-        token = 1;
-      else
-        token = 2;
 
-      BoardPrint(huntmap,token);
+      while (true)
+      {
+        //showboard where the wolf only can see
+        BoardPrint(huntmap, animal, wolf.location, rabbit.location);
+        //Ask for a direction for the animal to move
+        //Move(wolf.location, rabbit.location);
+        break;
+      }
+
+      //Console.WriteLine(wolf.location);
+      //Console.WriteLine(rabbit.location);
+
+
 
 
     }
 
-    //Display the board and reinterpret the numbers in the array as symbol representations
+    /* ---BoardPrint---
+     * Display the board and reinterpret the numbers in the array as symbol representations
+     * hmap will show the layout of the map
+     * beast signifies if they are a wolf or rabbit ("W" or "R")
+     * w is the location of the wolf
+     * r is the location of the rabbit
+    */
 
-    static void BoardPrint(int[] hmap, int token)
+    static void BoardPrint(int[] hmap, String beast, int w, int r)
     {
       bool symbol;
+      int token_position;
 
       Dictionary<int, char> dict = new Dictionary<int, char>()
                                 {
-                                    {1,'W'},
-                                    {2, 'R'},
-                                    {3,'F'},
-                                    {4,'_'}
+                                    {1,'F'},
+                                    {2,'_'}
                                 };
       for (int i = 0; i < 16; i++)
       {
         if (i % 4 == 0 && i != 0)
           Console.Write("\n");
-        symbol = CheckPosition(hmap, i, token);
+
+        //figure out if player is the wolf or rabbit and give the location that needs to be revealed
+        if (beast == "W")
+          token_position = w;
+        else
+          token_position = r;
+
+        symbol = CheckPosition(i, token_position);
+
         if (symbol == true)
         {
-          Console.Write(string.Format("{0} ", dict[hmap[i]]));
+          if (i != w && i != r)
+            Console.Write(string.Format("{0} ", dict[hmap[i]]));
+          else if (i == w)
+            Console.Write("W ");
+          else if (i == r)
+            Console.Write("R ");
         }
         else
         {
@@ -117,7 +138,20 @@ namespace ConsoleApp9
 
       }
 
+      Console.Write("\n\n");
 
+      for (int i = 0; i < 16; i++)
+      {
+        if (i % 4 == 0 && i != 0)
+          Console.Write("\n");
+        if (i != w && i != r)
+          Console.Write(string.Format("{0} ", dict[hmap[i]]));
+        else if (i == w)
+          Console.Write("W ");
+        else if (i == r)
+          Console.Write("R ");
+      }
+    
       Console.Write("\n\n");
 
 
@@ -132,19 +166,19 @@ namespace ConsoleApp9
 
 
 
-    /*CheckPosition
+    /* ---CheckPosition---
      * Check to see if the token is within the cell's range and if it is in bounds of the array
      *If the token piece is "visible" return true so the display knows to display it correctly
      */
 
-    static bool CheckPosition(int[] map, int position, int token)
+    static bool CheckPosition(int position, int animal_position)
     {
       bool up = false, down = false, left = false, right = false;
 
       //check left
       try
       {
-        if (map[position - 1] == token && position!= 4 && position != 8 && position != 12)
+        if (position - 1 == animal_position && position!= 4 && position != 8 && position != 12)
           left = true;
       }
       catch
@@ -154,7 +188,7 @@ namespace ConsoleApp9
       //check right
       try
       {
-        if (map[position + 1] == token && position != 3 && position != 7 && position != 11)
+        if (position + 1 == animal_position && position != 3 && position != 7 && position != 11)
           right = true;
       }
       catch
@@ -165,7 +199,7 @@ namespace ConsoleApp9
       //check above
       try
       {
-        if (map[position - 4] == token)
+        if (position - 4 == animal_position)
           up = true;
       }
       catch
@@ -175,13 +209,13 @@ namespace ConsoleApp9
       //check below
       try
       {
-        if (map[position + 4] == token)
+        if (position + 4 == animal_position)
           down = true;
       }
       catch
       {
       }
-      return (bool)(up==true || down == true || left == true || right == true || map[position]==token);
+      return (bool)(up==true || down == true || left == true || right == true || position == animal_position);
     }
 
 
