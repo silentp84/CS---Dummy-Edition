@@ -65,8 +65,12 @@ namespace ConsoleApp9
         animal = Console.ReadLine();
       }
 
+      //Create the wolf and the rabbit
+
       Card wolf = new Card("wolf");
       Card rabbit = new Card("rabbit", 0);
+
+      //Create the position on the board for the wolf and rabbit
       while (wolf.location == rabbit.location)
       {
         wolf.location = r.Next(0, 15);
@@ -76,11 +80,19 @@ namespace ConsoleApp9
 
       while (true)
       {
+        String temp;
         //showboard where the wolf only can see
         BoardPrint(huntmap, animal, wolf.location, rabbit.location);
         //Ask for a direction for the animal to move
-        //Move(wolf.location, rabbit.location);
-        break;
+        if(animal=="W")  
+          Move(animal, ref wolf, ref rabbit);
+        else
+          Move(animal, ref rabbit, ref wolf);
+        //CheckWin(wolf.location, rabbit.location);
+        /*Console.Write("Keep going?");
+        temp = Console.ReadLine();
+        if (temp == "0")
+          break;*/
       }
 
       //Console.WriteLine(wolf.location);
@@ -89,6 +101,51 @@ namespace ConsoleApp9
 
 
 
+    }
+
+
+
+    static void Move(String animal, ref Card pos_play, ref Card pos_comp)
+    {
+      Random rnd = new Random();
+      String direction="";
+      int compass;
+      bool finish = false;
+
+      Console.Write("\n\nWhich direction would you like to move?\n Up (U), Down (D), Left (L), Right (R):  ");
+      while (direction != "U" && direction != "D" && direction != "L" && direction != "R" || finish == false)
+      {
+        direction = Console.ReadLine();
+        finish = true;
+        if (direction == "U" && pos_play.location > 3)
+          pos_play.location -= 4;
+        else if (direction == "D" && pos_play.location < 12)
+          pos_play.location += 4;
+        else if (direction == "L" && pos_play.location != 0 && pos_play.location != 4 && pos_play.location != 8 && pos_play.location != 12)
+          pos_play.location -= 1;
+        else if (direction == "R" && pos_play.location != 3 && pos_play.location != 7 && pos_play.location != 11 && pos_play.location != 15)
+          pos_play.location += 1;
+        else
+          finish = false;
+      }
+
+      finish = false;
+
+      while (finish == false)
+      {
+        compass = rnd.Next(4);
+        finish = true;
+        if (compass == 1 && pos_comp.location > 3)
+          pos_comp.location -= 4;
+        else if (compass == 2 && pos_comp.location < 12)
+          pos_comp.location += 4;
+        else if (compass == 3 && pos_comp.location != 0 && pos_comp.location != 4 && pos_comp.location != 8 && pos_comp.location != 12)
+          pos_comp.location -= 1;
+        else if (compass == 4 && pos_comp.location != 3 && pos_comp.location != 7 && pos_comp.location != 11 && pos_comp.location != 15)
+          pos_comp.location += 1;
+        else
+          finish = false;
+      }
     }
 
     /* ---BoardPrint---
@@ -109,6 +166,9 @@ namespace ConsoleApp9
                                     {1,'F'},
                                     {2,'_'}
                                 };
+
+      Console.Clear();
+
       for (int i = 0; i < 16; i++)
       {
         if (i % 4 == 0 && i != 0)
@@ -137,7 +197,7 @@ namespace ConsoleApp9
         }
 
       }
-
+      
       Console.Write("\n\n");
 
       for (int i = 0; i < 16; i++)
@@ -153,15 +213,15 @@ namespace ConsoleApp9
       }
     
       Console.Write("\n\n");
+      
 
-
-      for (int i = 0; i < 16; i++)
+/*      for (int i = 0; i < 16; i++)
       {
         if (i % 4 == 0 && i != 0)
           Console.Write("\n");
         Console.Write(string.Format("{0} ", dict[hmap[i]]));
       }
-      Console.Write("\n");
+      Console.Write("\n"); */
     }
 
 
@@ -176,45 +236,22 @@ namespace ConsoleApp9
       bool up = false, down = false, left = false, right = false;
 
       //check left
-      try
-      {
-        if (position - 1 == animal_position && position!= 4 && position != 8 && position != 12)
-          left = true;
-      }
-      catch
-      {
-      }
+      if (position - 1 == animal_position && position!= 4 && position != 8 && position != 12)
+        left = true;
 
       //check right
-      try
-      {
-        if (position + 1 == animal_position && position != 3 && position != 7 && position != 11)
-          right = true;
-      }
-      catch
-      {
-      }
+      if (position + 1 == animal_position && position != 3 && position != 7 && position != 11)
+        right = true;
 
 
       //check above
-      try
-      {
-        if (position - 4 == animal_position)
-          up = true;
-      }
-      catch
-      {
-      }
+      if (position - 4 == animal_position)
+        up = true;
 
       //check below
-      try
-      {
-        if (position + 4 == animal_position)
-          down = true;
-      }
-      catch
-      {
-      }
+      if (position + 4 == animal_position)
+        down = true;
+
       return (bool)(up==true || down == true || left == true || right == true || position == animal_position);
     }
 
