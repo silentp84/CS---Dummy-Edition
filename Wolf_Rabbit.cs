@@ -11,7 +11,7 @@ namespace ConsoleApp9
     public class Card
     {
       public String name;
-      public static int rabbits;
+      public int rabbits;
       public int location;
       public Card(string tokenType)
       {
@@ -31,7 +31,6 @@ namespace ConsoleApp9
 
     static void Main(string[] args)
     {
-      Random rnd = new Random();
       /*
        -build a game that at first is a 4x4 grid
        -a wolf will start somewhere, a rabbit in another
@@ -42,7 +41,9 @@ namespace ConsoleApp9
        ***rabbit wins when there is no grass left
        ***wolf wins if it kills the rabbit
        */
+      Random rnd = new Random();
       int[] huntmap = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 }; //initialize board
+      bool game = true;
       Random r = new Random();      //randomize the board
       for (int i = huntmap.Length; i > 0; i--)
       {
@@ -73,28 +74,52 @@ namespace ConsoleApp9
       //Create the position on the board for the wolf and rabbit
       while (wolf.location == rabbit.location)
       {
-        wolf.location = r.Next(0, 15);
-        rabbit.location = r.Next(0, 15);
+        wolf.location = r.Next(0, huntmap.Length - 1);
+        rabbit.location = r.Next(0, huntmap.Length - 1);
       }
 
-
-      while (true)
+      if (huntmap[rabbit.location] == 1)
       {
-        String temp;
+        huntmap[rabbit.location] = 2;
+      }
+
+      while (game==true)
+      {
         //showboard where the wolf only can see
         BoardPrint(huntmap, animal, wolf.location, rabbit.location);
         //Ask for a direction for the animal to move
         if(animal=="W")  
-          Move(animal, ref wolf, ref rabbit);
+          Move(huntmap, animal, ref wolf, ref rabbit);
         else
-          Move(animal, ref rabbit, ref wolf);
-        //CheckWin(wolf.location, rabbit.location);
+        {
+          Move(huntmap, animal, ref rabbit, ref wolf);
+        }
+
+        if (huntmap[rabbit.location] == 1)
+        {
+          huntmap[rabbit.location] = 2;
+          rabbit.Add_Rabbit();
+        }
+
+        game = CheckWin(wolf.location, rabbit.location, rabbit.rabbits);
         /*Console.Write("Keep going?");
         temp = Console.ReadLine();
         if (temp == "0")
           break;*/
       }
-
+      if (animal == "W")
+      {
+        BoardPrint(huntmap, animal, wolf.location, rabbit.location);
+        Console.WriteLine("Nom Nom Nom, Bunny yummy...");
+        Console.WriteLine("You Win!!");
+      }
+      else if(animal == "R")
+      {
+        BoardPrint(huntmap, animal, wolf.location, rabbit.location);
+        Console.WriteLine("Wolfy can't eat us all");
+        Console.WriteLine("You Win!!");
+      }
+      Console.WriteLine("GAME OVER");
       //Console.WriteLine(wolf.location);
       //Console.WriteLine(rabbit.location);
 
@@ -103,16 +128,25 @@ namespace ConsoleApp9
 
     }
 
+    static bool CheckWin(int locw, int locr, int rab)
+    {
+      if (locw == locr)
+        return false;
+      if (rab == 6)
+        return false;
+      else
+        return true;
+    }
 
-
-    static void Move(String animal, ref Card pos_play, ref Card pos_comp)
+    static void Move(int[] hmap, String animal, ref Card pos_play, ref Card pos_comp)
     {
       Random rnd = new Random();
+      ConsoleKeyInfo key_press;
       String direction="";
       int compass;
       bool finish = false;
 
-      Console.Write("\n\nWhich direction would you like to move?\n Up (U), Down (D), Left (L), Right (R):  ");
+      /*Console.Write("\n\nWhich direction would you like to move?\n Up (U), Down (D), Left (L), Right (R):  ");
       while (direction != "U" && direction != "D" && direction != "L" && direction != "R" || finish == false)
       {
         direction = Console.ReadLine();
@@ -127,7 +161,24 @@ namespace ConsoleApp9
           pos_play.location += 1;
         else
           finish = false;
-      }
+      }*/
+
+      Console.Write("\n\nUse arrow keys to move around.");
+      do
+      {
+        key_press = Console.ReadKey();
+        finish = true;
+        if (key_press.Key == ConsoleKey.UpArrow && pos_play.location > 3)
+          pos_play.location -= 4;
+        else if (key_press.Key == ConsoleKey.DownArrow && pos_play.location < 12)
+          pos_play.location += 4;
+        else if (key_press.Key == ConsoleKey.LeftArrow && pos_play.location != 0 && pos_play.location != 4 && pos_play.location != 8 && pos_play.location != 12)
+          pos_play.location -= 1;
+        else if (key_press.Key == ConsoleKey.RightArrow && pos_play.location != 3 && pos_play.location != 7 && pos_play.location != 11 && pos_play.location != 15)
+          pos_play.location += 1;
+        else
+          finish = false;
+      } while (key_press.Key != ConsoleKey.UpArrow && key_press.Key != ConsoleKey.RightArrow && key_press.Key != ConsoleKey.LeftArrow && key_press.Key != ConsoleKey.DownArrow || finish == false);
 
       finish = false;
 
@@ -186,9 +237,10 @@ namespace ConsoleApp9
         {
           if (i != w && i != r)
             Console.Write(string.Format("{0} ", dict[hmap[i]]));
-          else if (i == w)
-            Console.Write("W ");
-          else if (i == r)
+          if (i == w)
+            if (beast=="W")
+              Console.Write("W ");
+          if (i == r)
             Console.Write("R ");
         }
         else
