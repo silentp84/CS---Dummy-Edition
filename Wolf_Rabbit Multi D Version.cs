@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp9
 {
@@ -154,7 +151,7 @@ namespace ConsoleApp9
         hmap[row_j, col_j] = temp;
       }
 
-      while (w.location[0] == r.location[0] && w.location[1] == r.location[1])
+      while (w.location == r.location)
       {
         w.location[0] = rand.Next(0, num_rows);
         w.location[1] = rand.Next(0, num_cols);
@@ -261,18 +258,6 @@ namespace ConsoleApp9
 
       for (int i = 0; i < num_rows; i++)
       {
-        for (int j = 0; j < num_cols; j++)
-        {
-          Console.Write(hmap[i, j]);
-          Console.Write(" ");
-        }
-        Console.WriteLine("");
-      }
-
-      Console.WriteLine("\nWolf Location: {0},{1}\nRabbit Location: {2},{3}\nBeast: {4}\n", w.location[0], w.location[1], r.location[0], r.location[1], beast);
-
-      for (int i = 0; i < num_rows; i++)
-      {
         Console.WriteLine("");
         for (int j = 0; j < num_cols; j++)
         {
@@ -285,6 +270,8 @@ namespace ConsoleApp9
 
           if (symbol == true)
           {
+            if (i != w.location[0] && j!=w.location[1] && i != r.location[0] && j!=r.location[1])
+              Console.Write(string.Format("{0} ", dict[hmap[i, j]]));
             if (i == w.location[0] && j == w.location[1])
             {
               if (beast == "W")
@@ -292,10 +279,8 @@ namespace ConsoleApp9
               else if (beast == "R")
                 Console.Write("F ");
             }
-            else if (i == r.location[0] && j == r.location[1])
+            if (i == r.location[0] && j == r.location[1])
               Console.Write("R ");
-            else
-              Console.Write(string.Format("{0} ", dict[hmap[i, j]]));
           }
           else
           {
@@ -311,13 +296,13 @@ namespace ConsoleApp9
         Console.WriteLine("");
         for (int j = 0; j < num_cols; j++)
         {
-          if (i == w.location[0] && j == w.location[1])
-            Console.Write("W ");
-          else if (i == r.location[0] && j == r.location[1])
-            Console.Write("R ");
-          else
+          if (i != w.location[0] && j != w.location[1] && i != r.location[0] && j != r.location[1])
             Console.Write(string.Format("{0} ", dict[hmap[i, j]]));
-        }
+          else if (i == w.location[0] && j == w.location[1])
+            Console.Write("W ");
+          else if (i == w.location[0] && j == w.location[1])
+            Console.Write("R ");
+        }        
       }
 
       Console.Write("\n\n");
@@ -347,14 +332,14 @@ namespace ConsoleApp9
       //check left
       if (x != 0)
       {
-        if (x - 1 == a_loc.location[1] && y == a_loc.location[0])
+        if (x - 1 == a_loc.location[0])
           left = true;
       }
 
       //check right
       if (x != cols - 1)
       {
-        if (x + 1 == a_loc.location[1] && y == a_loc.location[0])
+        if (x + 1 == a_loc.location[0])
           right = true;
       }
 
@@ -362,18 +347,18 @@ namespace ConsoleApp9
       //check above
       if (y != 0)
       {
-        if (y - 1 == a_loc.location[0] && x == a_loc.location[1])
+        if (y - 1 == a_loc.location[1])
           up = true;
       }
 
       //check below
       if (y != rows - 1)
       {
-        if (y + 1 == a_loc.location[0] && x == a_loc.location[1])
+        if (y + 1 == a_loc.location[1])
           down = true;
       }
 
-      return (bool)(up == true || down == true || left == true || right == true || (x == a_loc.location[1] && y == a_loc.location[0]));
+      return (bool)(up == true || down == true || left == true || right == true || (x == a_loc.location[0] && y == a_loc.location[1]));
     }
 
 
