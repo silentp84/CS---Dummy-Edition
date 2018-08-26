@@ -42,7 +42,7 @@ namespace ConsoleApp9
        ***wolf wins if it kills the rabbit
        */
       Random rnd = new Random();
-      int[,] huntmap = new int[,] { { 1, 1, 1, 1 }, { 1, 1, 1, 1 }, { 1, 1, 1, 2 }, { 2, 2, 2, 2 } }; //initialize board
+      int[,] huntmap = new int[,] { { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 2, 2 }, { 2, 2, 2, 2, 2 }, { 1, 1, 1, 1, 2 } }; //initialize board
       bool game = true;
       String temp;
 
@@ -172,7 +172,11 @@ namespace ConsoleApp9
       int compass;
       bool finish = false;
 
-      Console.Write("\n\nUse arrow keys to move around.");
+      if (animal == "R")
+        Console.Write("\n\nUse arrow keys to move around.");
+      else if (animal == "W")
+        Console.WriteLine("\n\nUse arrow keys to move around. Press space to lie in wait");
+
       do
       {
         key_press = Console.ReadKey();
@@ -185,6 +189,8 @@ namespace ConsoleApp9
           pos_play.location[1] -= 1;
         else if (key_press.Key == ConsoleKey.RightArrow && pos_play.location[1] != cols - 1)
           pos_play.location[1] += 1;
+        else if (key_press.Key == ConsoleKey.Spacebar && animal == "W")
+          break;
         else
           finish = false;
       } while (key_press.Key != ConsoleKey.UpArrow && key_press.Key != ConsoleKey.RightArrow && key_press.Key != ConsoleKey.LeftArrow && key_press.Key != ConsoleKey.DownArrow || finish == false);
@@ -231,9 +237,8 @@ namespace ConsoleApp9
                                 };
 
       Console.Clear();
-      Console.Write("\n\n\n");
 
-      for (int i = 0; i < num_rows; i++)
+      /*for (int i = 0; i < num_rows; i++)
       {
         for (int j = 0; j < num_cols; j++)
         {
@@ -243,7 +248,13 @@ namespace ConsoleApp9
         Console.WriteLine("");
       }
 
-      Console.WriteLine("\nWolf Location: {0},{1}\nRabbit Location: {2},{3}\nBeast: {4}\n", w.location[0], w.location[1], r.location[0], r.location[1], beast);
+      Console.WriteLine("\nWolf Location: {0},{1}\nRabbit Location: {2},{3}\nBeast: {4}\n", w.location[0], w.location[1], r.location[0], r.location[1], beast);*/
+      if (beast == "W")
+        Console.WriteLine("You are the wolf.\n\nFind the rabbit by moving on the rabbits exact square to win\n before the rabbit eats all of the fields (F).\n");
+      else if (beast == "R")
+        Console.WriteLine("You are the rabbit.\n\nEat all of the field grass (F).\nProcreate enough of your population before the wolf eats you up.\n");
+      Console.WriteLine("The wolf can see the rabbit. The rabbit cannot see the wolf. Good luck.\n");
+      Console.WriteLine("No. of rabbits: {0}\n\n", r.rabbits);
 
       for (int i = 0; i < num_rows; i++)
       {
@@ -280,7 +291,7 @@ namespace ConsoleApp9
 
       Console.Write("\n\n");
 
-      for (int i = 0; i < num_rows; i++)
+      /*for (int i = 0; i < num_rows; i++)
       {
         Console.WriteLine("");
         for (int j = 0; j < num_cols; j++)
@@ -292,7 +303,7 @@ namespace ConsoleApp9
           else
             Console.Write(string.Format("{0} ", dict[hmap[i, j]]));
         }
-      }
+      }*/
 
       Console.Write("\n\n");
 
