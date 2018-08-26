@@ -44,6 +44,7 @@ namespace ConsoleApp9
       Random rnd = new Random();
       int[,] huntmap = new int[,] { { 1, 1, 1, 1 }, { 1, 1, 1, 1 }, { 1, 1, 1, 2 }, { 2, 2, 2, 2 } }; //initialize board
       bool game = true;
+      String temp;
 
       //Create the wolf and the rabbit
 
@@ -66,44 +67,38 @@ namespace ConsoleApp9
         animal = Console.ReadLine();
       }
 
-
-
-
-
       if (huntmap[rabbit.location[0], rabbit.location[1]] == 1)
       {
         huntmap[rabbit.location[0], rabbit.location[1]] = 2;
       }
 
-      /*while (game == true)
+      int num_rows = huntmap.GetUpperBound(0) + 1;
+      int num_cols = huntmap.GetUpperBound(1) + 1;
+      while (game == true)
       {
         //showboard where the wolf only can see
         BoardPrint(huntmap, animal, wolf, rabbit);
         //Ask for a direction for the animal to move
         if (animal == "W")
-          Move(huntmap, animal, ref wolf, ref rabbit);
+          Move(huntmap, animal, ref wolf, ref rabbit, num_rows, num_cols);
         else
         {
-          Move(huntmap, animal, ref rabbit, ref wolf);
+          Move(huntmap, animal, ref rabbit, ref wolf, num_rows, num_cols);
         }
 
-        if (huntmap[rabbit.location] == 1)
+        if (huntmap[rabbit.location[0], rabbit.location[1]] == 1)
         {
-          huntmap[rabbit.location] = 2;
+          huntmap[rabbit.location[0], rabbit.location[1]] = 2;
           rabbit.Add_Rabbit();
         }
 
-        game = CheckWin(wolf.location, rabbit.location, rabbit.rabbits);
-        Console.Write("Keep going?");
-        temp = Console.ReadLine();
-        if (temp == "0")
-          break;
-      }*/
+        game = CheckWin(wolf, rabbit, rabbit.rabbits);
+      }
 
       BoardPrint(huntmap, animal, wolf, rabbit);
 
       Console.Write("\n\n");
-      /*if (wolf.location == rabbit.location)
+      if (wolf.location[0] == rabbit.location[0] && wolf.location[1] == rabbit.location[1])
       {
         Console.WriteLine("Nom Nom Nom, Bunny yummy...");
         winner = "W";
@@ -122,10 +117,6 @@ namespace ConsoleApp9
       Console.WriteLine("GAME OVER");
       //Console.WriteLine(wolf.location);
       //Console.WriteLine(rabbit.location);
-      */
-
-
-
     }
 
     static void randomize(ref int[,] hmap, ref Card w, ref Card r)
@@ -163,9 +154,9 @@ namespace ConsoleApp9
       }
     }
 
-    static bool CheckWin(int locw, int locr, int rab)
+    static bool CheckWin(Card locw, Card locr, int rab)
     {
-      if (locw == locr)
+      if (locw.location[0] == locr.location[0] && locw.location[1] == locr.location[1])
         return false;
       if (rab == 9)
         return false;
@@ -173,7 +164,7 @@ namespace ConsoleApp9
         return true;
     }
 
-    /*static void Move(int[] hmap, String animal, ref Card pos_play, ref Card pos_comp)
+    static void Move(int[,] hmap, String animal, ref Card pos_play, ref Card pos_comp, int rows, int cols)
     {
       Random rnd = new Random();
       ConsoleKeyInfo key_press;
@@ -181,36 +172,19 @@ namespace ConsoleApp9
       int compass;
       bool finish = false;
 
-      Console.Write("\n\nWhich direction would you like to move?\n Up (U), Down (D), Left (L), Right (R):  ");
-      while (direction != "U" && direction != "D" && direction != "L" && direction != "R" || finish == false)
-      {
-        direction = Console.ReadLine();
-        finish = true;
-        if (direction == "U" && pos_play.location > 3)
-          pos_play.location -= 4;
-        else if (direction == "D" && pos_play.location < 12)
-          pos_play.location += 4;
-        else if (direction == "L" && pos_play.location != 0 && pos_play.location != 4 && pos_play.location != 8 && pos_play.location != 12)
-          pos_play.location -= 1;
-        else if (direction == "R" && pos_play.location != 3 && pos_play.location != 7 && pos_play.location != 11 && pos_play.location != 15)
-          pos_play.location += 1;
-        else
-          finish = false;
-      }
-
       Console.Write("\n\nUse arrow keys to move around.");
       do
       {
         key_press = Console.ReadKey();
         finish = true;
-        if (key_press.Key == ConsoleKey.UpArrow && pos_play.location > 3)
-          pos_play.location -= 4;
-        else if (key_press.Key == ConsoleKey.DownArrow && pos_play.location < 12)
-          pos_play.location += 4;
-        else if (key_press.Key == ConsoleKey.LeftArrow && pos_play.location != 0 && pos_play.location != 4 && pos_play.location != 8 && pos_play.location != 12)
-          pos_play.location -= 1;
-        else if (key_press.Key == ConsoleKey.RightArrow && pos_play.location != 3 && pos_play.location != 7 && pos_play.location != 11 && pos_play.location != 15)
-          pos_play.location += 1;
+        if (key_press.Key == ConsoleKey.UpArrow && pos_play.location[0] != 0)
+          pos_play.location[0] -= 1;
+        else if (key_press.Key == ConsoleKey.DownArrow && pos_play.location[0] != rows - 1)
+          pos_play.location[0] += 1;
+        else if (key_press.Key == ConsoleKey.LeftArrow && pos_play.location[1] != 0)
+          pos_play.location[1] -= 1;
+        else if (key_press.Key == ConsoleKey.RightArrow && pos_play.location[1] != cols - 1)
+          pos_play.location[1] += 1;
         else
           finish = false;
       } while (key_press.Key != ConsoleKey.UpArrow && key_press.Key != ConsoleKey.RightArrow && key_press.Key != ConsoleKey.LeftArrow && key_press.Key != ConsoleKey.DownArrow || finish == false);
@@ -221,18 +195,18 @@ namespace ConsoleApp9
       {
         compass = rnd.Next(1, 5);
         finish = true;
-        if (compass == 1 && pos_comp.location > 3)
-          pos_comp.location -= 4;
-        else if (compass == 2 && pos_comp.location < 12)
-          pos_comp.location += 4;
-        else if (compass == 3 && pos_comp.location != 0 && pos_comp.location != 4 && pos_comp.location != 8 && pos_comp.location != 12)
-          pos_comp.location -= 1;
-        else if (compass == 4 && pos_comp.location != 3 && pos_comp.location != 7 && pos_comp.location != 11 && pos_comp.location != 15)
-          pos_comp.location += 1;
+        if (compass == 1 && pos_comp.location[0] != 0)
+          pos_comp.location[0] -= 1;
+        else if (compass == 2 && pos_comp.location[0] != rows - 1)
+          pos_comp.location[0] += 1;
+        else if (compass == 3 && pos_comp.location[1] != 0)
+          pos_comp.location[1] -= 1;
+        else if (compass == 4 && pos_comp.location[1] != cols - 1)
+          pos_comp.location[1] += 1;
         else
           finish = false;
       }
-    } */
+    }
 
     /* ---BoardPrint---
      * Display the board and reinterpret the numbers in the array as symbol representations
