@@ -166,7 +166,6 @@ namespace ConsoleApp9
         Console.WriteLine("You LOSE...");
 
       Console.WriteLine("GAME OVER");
-
     }
 
     static void randomize(ref int[,] hmap, ref Card w, ref Card r)
@@ -238,6 +237,17 @@ namespace ConsoleApp9
 
       Console.Clear();
 
+      /*for (int i = 0; i < num_rows; i++)
+      {
+        for (int j = 0; j < num_cols; j++)
+        {
+          Console.Write(hmap[i, j]);
+          Console.Write(" ");
+        }
+        Console.WriteLine("");
+      }
+
+      Console.WriteLine("\nWolf Location: {0},{1}\nRabbit Location: {2},{3}\nBeast: {4}\n", w.location[0], w.location[1], r.location[0], r.location[1], beast);*/
       if (beast == "W")
         Console.WriteLine("You are the wolf.\n\nFind the rabbit by moving on the rabbits exact square to win\n before the rabbit eats all of the fields (F).\n");
       else if (beast == "R")
@@ -279,6 +289,20 @@ namespace ConsoleApp9
       }
 
       Console.Write("\n\n");
+
+      /*for (int i = 0; i < num_rows; i++)
+      {
+        Console.WriteLine("");
+        for (int j = 0; j < num_cols; j++)
+        {
+          if (i == w.location[0] && j == w.location[1])
+            Console.Write("W ");
+          else if (i == r.location[0] && j == r.location[1])
+            Console.Write("R ");
+          else
+            Console.Write(string.Format("{0} ", dict[hmap[i, j]]));
+        }
+      }*/
     }
 
 
