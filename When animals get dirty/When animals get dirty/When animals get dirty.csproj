@@ -42,8 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CS_Array_Jagged.cs" />
+    <Compile Include="CS_Basic 1.cs" />
+    <Compile Include="CS_Class_Members_Constructor_Static.cs" />
+    <Compile Include="CS_Ref Modifier.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wolf_Rabbit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
