@@ -20,7 +20,7 @@ namespace ConsoleApp5
 
   class Program
   {
-    static void Main(string[] args)
+    static void _Main(string[] args)
     {
       Emos ruggle = new Emos("rlly?");
       Console.WriteLine(ruggle.Name + " " + Emos.Scars);

@@ -8,7 +8,7 @@ namespace ConsoleApp7
 {
   class Program
   {
-    static void Main(string[] args)
+    static void _Main(string[] args)
     {
       int[][] matrix = new int[3][];
       for (int i = 0; i < matrix.Length; i++)

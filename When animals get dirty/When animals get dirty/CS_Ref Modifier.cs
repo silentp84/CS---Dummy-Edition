@@ -14,7 +14,7 @@ namespace ConsoleApp8
       a = b;
       b = temp;
     }
-    static void Main(string[] args)
+    static void _Main(string[] args)
     {
       string x = "Penn";
       string y = "Teller";

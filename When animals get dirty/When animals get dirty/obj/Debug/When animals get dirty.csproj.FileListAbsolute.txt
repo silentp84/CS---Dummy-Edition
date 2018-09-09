@@ -1,0 +1,7 @@
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\obj\Debug\When animals get dirty.csprojAssemblyReference.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\obj\Debug\When animals get dirty.csproj.CoreCompileInputs.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\bin\Debug\When animals get dirty.exe.config
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\bin\Debug\When animals get dirty.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\bin\Debug\When animals get dirty.pdb
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\obj\Debug\When animals get dirty.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\When animals get dirty\When animals get dirty\obj\Debug\When animals get dirty.pdb
