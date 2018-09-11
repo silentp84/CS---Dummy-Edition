@@ -45,7 +45,7 @@ namespace Blackjack
       }
     }
     
-    void shuffle(ref List<Card> blackj)
+    public static void Shuffle<T>(ref List<Card> blackj)
     {
       Random rng = new Random();
       int n = blackj.Count;
