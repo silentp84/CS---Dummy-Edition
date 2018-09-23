@@ -30,7 +30,7 @@ namespace Blackjack
 
     public DeckHand()
     {
-
+      Deck = new List<Card>();
     }
 
     public void AddCard(string i, string j)
@@ -87,7 +87,7 @@ namespace Blackjack
 
       DeckHand deck = new DeckHand();
       deck.Create();
-      //deck.Shuffle();
+      deck.Shuffle();
       deck.Print();
 
       DeckHand dealer = new DeckHand();
