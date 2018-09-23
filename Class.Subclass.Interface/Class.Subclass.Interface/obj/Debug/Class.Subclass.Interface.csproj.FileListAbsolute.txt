@@ -1,0 +1,7 @@
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\obj\Debug\Class.Subclass.Interface.csprojAssemblyReference.cache
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\obj\Debug\Class.Subclass.Interface.csproj.CoreCompileInputs.cache
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\bin\Debug\Class.Subclass.Interface.exe.config
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\bin\Debug\Class.Subclass.Interface.exe
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\bin\Debug\Class.Subclass.Interface.pdb
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\obj\Debug\Class.Subclass.Interface.exe
+C:\Users\Paul\Desktop\GitHub\CS---Dummy-Edition\Class.Subclass.Interface\Class.Subclass.Interface\obj\Debug\Class.Subclass.Interface.pdb
