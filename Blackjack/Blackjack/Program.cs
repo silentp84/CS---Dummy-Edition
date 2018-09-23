@@ -20,22 +20,23 @@ namespace Blackjack
   class DeckHand
   {
     List<Card> Deck { get; set; }
+    int Score { get; set; }
     Dictionary<string, int> value = new Dictionary<string, int>() {
         { "Two",2 }, {"Three",3}, {"Four",4}, {"Five",5},
         { "Six",6}, {"Seven",7},{ "Eight",8 }, { "Nine",9 },
         { "Ten",10 }, {"Jack",10 }, {"Queen",10 }, {"King",10 } };
 
-    string[] suit = new string[] { "Hearts", "Diamonds", "Clubs", "Spades" };
-    string[] rank = new string[] { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace" };
+    string[] Suit = new string[] { "Hearts", "Diamonds", "Clubs", "Spades" };
+    string[] Rank = new string[] { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace" };
 
     public DeckHand()
     {
       Deck = new List<Card>();
     }
 
-    public void AddCard(string i, string j)
+    public void AddCard(Card card)
     {
-      Deck.Add(new Card(i, j));
+      Deck.Add(card);
     }
 
     public Card DrawCard()
@@ -47,9 +48,9 @@ namespace Blackjack
 
     public void Create()
     {
-      foreach (string i in suit)
+      foreach (string i in Suit)
       {
-        foreach (string j in rank)
+        foreach (string j in Rank)
         {
           Deck.Add(new Card(i, j));
         }
@@ -70,13 +71,18 @@ namespace Blackjack
       }
     }
 
-    public void Print()
+    public void Print(string turn)
     {
+      int total = 0;
+      Console.WriteLine(turn + " Hand: ");
       foreach (Card k in Deck)
       {
         Console.WriteLine(k.Rank + " of " + k.Suit);
+        total += value[k.Rank];
       }
+      Console.WriteLine(turn + " Total: " + total + "\n");
     }
+
   }
 
   class Program
@@ -88,10 +94,17 @@ namespace Blackjack
       DeckHand deck = new DeckHand();
       deck.Create();
       deck.Shuffle();
-      deck.Print();
 
       DeckHand dealer = new DeckHand();
       DeckHand player = new DeckHand();
+
+      player.AddCard(deck.DrawCard());
+      dealer.AddCard(deck.DrawCard());
+      player.AddCard(deck.DrawCard());
+      dealer.AddCard(deck.DrawCard());
+
+      player.Print("Player's");
+      dealer.Print("Dealer's");
 
 
 
