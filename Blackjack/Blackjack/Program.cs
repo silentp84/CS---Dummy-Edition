@@ -69,6 +69,10 @@ namespace Blackjack
     public void AddCard(Card card)
     {
       Deck.Add(card);
+      if (card.Rank == "Ace")
+      {
+
+      }
       Score += card.Point;
     }
 
@@ -175,6 +179,9 @@ namespace Blackjack
       {
         do
         {
+          player.Score = 0;
+          dealer.Score = 0;
+
           Console.Clear();
           play.Print();
           Console.WriteLine("Make your bet (use the up and down arrow keys to adjust the bet)");
@@ -235,7 +242,7 @@ namespace Blackjack
           if (dealer.Score > 15)
           {
             Console.WriteLine("Dealer stays.");
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
             break;
           }
           else
@@ -245,7 +252,7 @@ namespace Blackjack
             player.Print(play.Name);
             dealer.Print("Dealer's");
             Console.WriteLine("Dealer hits.");
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
           }
 
           if (dealer.CheckBust("Dealer"))
@@ -257,7 +264,7 @@ namespace Blackjack
         {
           Console.WriteLine("Tie!");
         }
-        else if (player.Score == result || dealer.Score > 21)
+        else if ((player.Score == result || dealer.Score > 21) && player.Score <= 21)
         {
           Console.WriteLine(play.Name + " wins!");
           play.AdjustChip(play.Bet);
