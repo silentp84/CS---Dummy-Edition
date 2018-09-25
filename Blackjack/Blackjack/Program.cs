@@ -69,11 +69,26 @@ namespace Blackjack
     public void AddCard(Card card)
     {
       Deck.Add(card);
-      if (card.Rank == "Ace")
-      {
+      ScoreHand();
+    }
 
+    public void ScoreHand()
+    {
+      List<Card> SortedTemp;
+      Score = 0;
+      SortedTemp = Deck.OrderBy(o => o.Point).ToList();
+      foreach (Card k in Deck)
+      {
+        if (k.Point != 11)
+          Score += k.Point;
+        else
+        {
+          if (Score + 11 > 21)
+            Score += 1;
+          else
+            Score += 11;
+        }
       }
-      Score += card.Point;
     }
 
     public Card DrawCard()
@@ -126,7 +141,8 @@ namespace Blackjack
           Console.WriteLine(k.Rank + " of " + k.Suit + " " + k.Point);
         hide = false;
       }
-      Console.WriteLine(turn + " Total: " + Score + "\n");
+      if (turn != "Dealer's")
+        Console.WriteLine(turn + " Total: " + Score + "\n");
     }
 
     public void Print()
@@ -164,7 +180,6 @@ namespace Blackjack
       DeckHand deck = new DeckHand();
       DeckHand dealer = new DeckHand();
       DeckHand player = new DeckHand();
-      List<Card> SortedTemp;
       ConsoleKeyInfo key_press;
 
       Console.WriteLine("---Blackjack---\n\n Press Spacebar to play");
@@ -208,20 +223,12 @@ namespace Blackjack
         player.AddCard(deck.DrawCard());
         dealer.AddCard(deck.DrawCard());
 
-        SortedTemp = player.Deck.OrderBy(o => o.Point).ToList();
-        player.Deck = SortedTemp;
-        SortedTemp = dealer.Deck.OrderBy(o => o.Point).ToList();
-        dealer.Deck = SortedTemp;
-
-        player.Print(play.Name);
-        dealer.Print("Dealer's");
-
         while (true)
         {
           Console.Clear();
           player.Print(play.Name);
           dealer.Print("Dealer's");
-          Console.WriteLine("Space (Hit) Enter (Stay)");
+          Console.WriteLine("\nSpace (Hit) Enter (Stay)");
           do
           {
             key_press = Console.ReadKey();
@@ -241,8 +248,8 @@ namespace Blackjack
           dealer.Print("Dealer's");
           if (dealer.Score > 15)
           {
-            Console.WriteLine("Dealer stays.");
-            Thread.Sleep(3000);
+            Console.WriteLine("Dealer stays...");
+            Thread.Sleep(2000);
             break;
           }
           else
@@ -251,8 +258,8 @@ namespace Blackjack
             Console.Clear();
             player.Print(play.Name);
             dealer.Print("Dealer's");
-            Console.WriteLine("Dealer hits.");
-            Thread.Sleep(3000);
+            Console.WriteLine("Dealer hits...");
+            Thread.Sleep(2000);
           }
 
           if (dealer.CheckBust("Dealer"))
@@ -262,15 +269,24 @@ namespace Blackjack
         result = CheckWin(player.Score, dealer.Score);
         if ((player.Score == result) && (dealer.Score == result))
         {
+          Console.Clear();
+          player.Print(play.Name);
+          dealer.Print("Dealer");
           Console.WriteLine("Tie!");
         }
         else if ((player.Score == result || dealer.Score > 21) && player.Score <= 21)
         {
+          Console.Clear();
+          player.Print(play.Name);
+          dealer.Print("Dealer");
           Console.WriteLine(play.Name + " wins!");
           play.AdjustChip(play.Bet);
         }
         else
         {
+          Console.Clear();
+          player.Print(play.Name);
+          dealer.Print("Dealer");
           Console.WriteLine("Dealer wins!");
           play.AdjustChip(-1 * play.Bet);
         }
