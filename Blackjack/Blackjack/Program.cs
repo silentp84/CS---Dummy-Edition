@@ -66,21 +66,17 @@ namespace Blackjack
       Deck = new List<Card>();
     }
 
-    public void AddCard(Card card)
+    public void AddCard(DeckHand deck)
     {
-      Deck.Add(card);
-      if (card.Rank == "Ace")
+      Card draw = new Card(deck.Deck[0].Suit, deck.Deck[0].Rank);
+      deck.Deck.RemoveAt(0);
+      Deck.Add(draw);
+      if (draw.Rank == "Ace")
       {
-
+        if (Score >= 11)
+          draw.Point = 1;
       }
-      Score += card.Point;
-    }
-
-    public Card DrawCard()
-    {
-      Card draw = new Card(Deck[0].Suit,Deck[0].Rank);
-      Deck.RemoveAt(0);
-      return draw;
+      Score += draw.Point;
     }
 
     public void Clear()
@@ -203,10 +199,10 @@ namespace Blackjack
 
         player.Clear();
         dealer.Clear();
-        player.AddCard(deck.DrawCard());
-        dealer.AddCard(deck.DrawCard());
-        player.AddCard(deck.DrawCard());
-        dealer.AddCard(deck.DrawCard());
+        player.AddCard(deck);
+        dealer.AddCard(deck);
+        player.AddCard(deck);
+        dealer.AddCard(deck);
 
         SortedTemp = player.Deck.OrderBy(o => o.Point).ToList();
         player.Deck = SortedTemp;
@@ -229,12 +225,12 @@ namespace Blackjack
           if (key_press.Key == ConsoleKey.Enter)
             break;
           else
-            player.AddCard(deck.DrawCard());
+            player.AddCard(deck);
           if (player.CheckBust(play.Name))
             break;
         }
 
-        while (dealer.Score <= 15 && player.Score <= 21)
+        do
         {
           Console.Clear();
           player.Print(play.Name);
@@ -247,7 +243,7 @@ namespace Blackjack
           }
           else
           {
-            dealer.AddCard(deck.DrawCard());
+            dealer.AddCard(deck);
             Console.Clear();
             player.Print(play.Name);
             dealer.Print("Dealer's");
@@ -257,7 +253,7 @@ namespace Blackjack
 
           if (dealer.CheckBust("Dealer"))
             break;
-        }
+        } while (dealer.Score <= 15 && player.Score <= 21);
 
         result = CheckWin(player.Score, dealer.Score);
         if ((player.Score == result) && (dealer.Score == result))
