@@ -57,6 +57,7 @@ namespace Blackjack
   {
     public List<Card> Deck { get; set; }
     public int Score { get; set; }
+    public bool Blackjack { get; set; }
 
     string[] Suit = new string[] { "Hearts", "Diamonds", "Clubs", "Spades" };
     string[] Rank = new string[] { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace" };
@@ -68,6 +69,7 @@ namespace Blackjack
 
     public void AddCard(DeckHand deck)
     {
+      //draw card
       Card draw = new Card(deck.Deck[0].Suit, deck.Deck[0].Rank);
       deck.Deck.RemoveAt(0);
       Deck.Add(draw);
@@ -133,41 +135,45 @@ namespace Blackjack
     public void Print(string turn)
     {
       bool hide = true;
-      Console.WriteLine(turn + " Hand: ");
+      string possess;
+
+      if (char.ToLower(turn[turn.Length - 1]) == 's')
+        possess = "'";
+      else
+        possess = "'s";
+
+      Console.WriteLine(turn + possess + " Hand: ");
       foreach (Card k in Deck)
       {
-        if (turn == "Dealer's" && hide == true)
+        if (turn == "Dealer" && hide == true)
           Console.WriteLine("********************");
         else
-          Console.WriteLine(k.Rank + " of " + k.Suit + " " + k.Point);
+          Console.WriteLine(k.Rank + " of " + k.Suit + " ");
         hide = false;
       }
-      if (turn != "Dealer's")
-        Console.WriteLine(turn + " Total: " + Score + "\n");
+      Console.WriteLine();
+
+      /*if (turn != "Dealer's")
+        Console.WriteLine(turn + " Total: " + Score + "\n");*/
     }
 
-    public void Print()
+    public bool CheckBust()
     {
-      int count = 0;
-      foreach(Card k in Deck)
-      {
-        Console.WriteLine(k.Rank + " of " + k.Suit);
-        count++;
-      }
-      Console.WriteLine(count);
+      return Score > 21;
     }
 
-    public bool CheckBust(string name)
+    public void CheckBJ()
     {
-      ConsoleKeyInfo key_press;
-      if (Score > 21)
+      List<int> bj = new List<int> { 10, 11 };
+      foreach (Card k in Deck)
       {
-        Console.Clear();
-        Print(name);
-        Console.WriteLine(name + " busts!");
-        key_press = Console.ReadKey();
+        if (k.Point == 11)
+          bj.RemoveAt(11);
+        if (k.Point == 10)
+          bj.RemoveAt(10);
       }
-      return (Score > 21);
+      if (!bj.Any())
+        Blackjack = true;
     }
   }
 
@@ -178,9 +184,9 @@ namespace Blackjack
       bool game = true;
       int result;
 
-      DeckHand deck = new DeckHand();
-      DeckHand dealer = new DeckHand();
-      DeckHand player = new DeckHand();
+      DeckHand deck = new DeckHand(); //Deck
+      DeckHand dealer = new DeckHand(); //Dealer's hand
+      DeckHand player = new DeckHand(); //Player's hand
       ConsoleKeyInfo key_press;
 
       Console.WriteLine("---Blackjack---\n\n Press Spacebar to play");
@@ -189,7 +195,7 @@ namespace Blackjack
         key_press = Console.ReadKey();
       } while (key_press.Key != ConsoleKey.Spacebar);
 
-      Player play = new Player();
+      Player play = new Player(); //player info
 
       while (game)
       {
@@ -223,12 +229,13 @@ namespace Blackjack
         dealer.AddCard(deck);
         player.AddCard(deck);
         dealer.AddCard(deck);
+        player.CheckBJ();
+        dealer.CheckBJ();
 
-        while (true)
+        //player's turn
+        while (!player.CheckBust() && !player.Blackjack && !dealer.Blackjack)
         {
-          Console.Clear();
-          player.Print(play.Name);
-          dealer.Print("Dealer's");
+          Print(player, dealer, play);
           Console.WriteLine("\nSpace (Hit) Enter (Stay)");
           do
           {
@@ -238,56 +245,53 @@ namespace Blackjack
             break;
           else
             player.AddCard(deck);
-          if (player.CheckBust(play.Name))
-            break;
         }
 
-        do
+        //house's turn
+        while (dealer.Score <= 15 && !player.CheckBust() && !player.Blackjack && !dealer.Blackjack)
         {
           Console.Clear();
-          player.Print(play.Name);
-          dealer.Print("Dealer's");
-          if (dealer.Score > 15)
-          {
-            Console.WriteLine("Dealer stays...");
-            Thread.Sleep(2000);
-            break;
-          }
-          else
-          {
-            dealer.AddCard(deck);
-            Console.Clear();
             player.Print(play.Name);
             dealer.Print("Dealer's");
-            Console.WriteLine("Dealer hits...");
-            Thread.Sleep(2000);
+            if (dealer.Score > 15)
+            {
+              Console.WriteLine("Dealer stays...");
+              Thread.Sleep(2000);
+              break;
+            }
+            else
+            {
+              dealer.AddCard(deck);
+              Print(player, dealer, play);
+              Console.WriteLine("Dealer hits...");
+              Thread.Sleep(2000);
+            }
+
+            if (dealer.CheckBust())
+              break;
           }
 
-          if (dealer.CheckBust("Dealer"))
-            break;
-        } while (dealer.Score <= 15 && player.Score <= 21);
-
         result = CheckWin(player.Score, dealer.Score);
+
+        Print(player, dealer, play);
+
+        //check to see who wins and if anyone busted
+        if (dealer.CheckBust())
+          Console.WriteLine("Dealer busts!");
+        if (player.CheckBust())
+          Console.WriteLine(play.Name + " busts!");
+
         if ((player.Score == result) && (dealer.Score == result))
         {
-          Console.Clear();
-          player.Print(play.Name);
-          dealer.Print("Dealer");
           Console.WriteLine("Tie!");
         }
         else if ((player.Score == result || dealer.Score > 21) && player.Score <= 21)
         {
-          Console.Clear();
-          player.Print(play.Name);
-          dealer.Print("Dealer");
           Console.WriteLine(play.Name + " wins!");
           play.AdjustChip(play.Bet);
         }
         else
         {
-          Console.Clear();
-          player.Print(play.Name);
-          dealer.Print("Dealer");
           Console.WriteLine("Dealer wins!");
           play.AdjustChip(-1 * play.Bet);
         }
@@ -298,6 +302,14 @@ namespace Blackjack
     public static int CheckWin(int p_score, int d_score)
     {
       return Math.Max(p_score, d_score);
+    }
+
+    public static void Print(DeckHand p, DeckHand d, Player n)
+    {
+      Console.Clear();
+      Console.WriteLine();
+      p.Print(n.Name);
+      d.Print("Dealer");
     }
   }
 }
