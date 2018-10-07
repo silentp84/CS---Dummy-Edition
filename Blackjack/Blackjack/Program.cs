@@ -69,26 +69,22 @@ namespace Blackjack
 
     public void AddCard(DeckHand deck)
     {
-      //draw card
+      //draw card from the deck
       Card draw = new Card(deck.Deck[0].Suit, deck.Deck[0].Rank);
       deck.Deck.RemoveAt(0);
       Deck.Add(draw);
-      if (draw.Rank == "Ace")
-      {
-        if (Score >= 11)
-          draw.Point = 1;
-      }
-      Score += draw.Point;
       ScoreHand();
     }
 
     public void ScoreHand()
     {
+      //sort the hand for Aces and then calculate score
       List<Card> SortedTemp;
       Score = 0;
       SortedTemp = Deck.OrderBy(o => o.Point).ToList();
       foreach (Card k in Deck)
       {
+        //check to see if the Ace pushes over 21, if so make it worth one
         if (k.Point != 11)
           Score += k.Point;
         else
@@ -132,7 +128,7 @@ namespace Blackjack
       }
     }
 
-    public void Print(string turn)
+    public void Print(string turn, int end = 0)
     {
       bool hide = true;
       string possess;
@@ -145,7 +141,7 @@ namespace Blackjack
       Console.WriteLine(turn + possess + " Hand: ");
       foreach (Card k in Deck)
       {
-        if (turn == "Dealer" && hide == true)
+        if (turn == "Dealer" && hide == true && end == 0)
           Console.WriteLine("********************");
         else
           Console.WriteLine(k.Rank + " of " + k.Suit + " ");
@@ -159,6 +155,7 @@ namespace Blackjack
 
     public bool CheckBust()
     {
+      ScoreHand();
       return Score > 21;
     }
 
@@ -168,9 +165,9 @@ namespace Blackjack
       foreach (Card k in Deck)
       {
         if (k.Point == 11)
-          bj.RemoveAt(11);
+          bj.Remove(11);
         if (k.Point == 10)
-          bj.RemoveAt(10);
+          bj.Remove(10);
       }
       if (!bj.Any())
         Blackjack = true;
@@ -273,7 +270,12 @@ namespace Blackjack
 
         result = CheckWin(player.Score, dealer.Score);
 
-        Print(player, dealer, play);
+        Print(player, dealer, play, 1);
+
+        if (player.Blackjack)
+          Console.WriteLine(play.Name + "has blackjack!");
+        if (dealer.Blackjack)
+          Console.WriteLine("Dealer has blackjack!");
 
         //check to see who wins and if anyone busted
         if (dealer.CheckBust())
@@ -281,11 +283,11 @@ namespace Blackjack
         if (player.CheckBust())
           Console.WriteLine(play.Name + " busts!");
 
-        if ((player.Score == result) && (dealer.Score == result))
+        if ((player.Score == result) && (dealer.Score == result) || (player.Blackjack && dealer.Blackjack))
         {
           Console.WriteLine("Tie!");
         }
-        else if ((player.Score == result || dealer.Score > 21) && player.Score <= 21)
+        else if ((player.Score == result || dealer.Score > 21) && player.Score <= 21 || (player.Blackjack))
         {
           Console.WriteLine(play.Name + " wins!");
           play.AdjustChip(play.Bet);
@@ -304,12 +306,12 @@ namespace Blackjack
       return Math.Max(p_score, d_score);
     }
 
-    public static void Print(DeckHand p, DeckHand d, Player n)
+    public static void Print(DeckHand p, DeckHand d, Player n, int end = 0)
     {
       Console.Clear();
       Console.WriteLine();
       p.Print(n.Name);
-      d.Print("Dealer");
+      d.Print("Dealer", end);
     }
   }
 }
