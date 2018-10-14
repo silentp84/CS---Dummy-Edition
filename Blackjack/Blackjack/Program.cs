@@ -9,12 +9,15 @@ namespace Blackjack
 {
   class Card
   {
+    //Each card has an associated numeric value via Value
     Dictionary<string, int> Value = new Dictionary<string, int>() {
         { "Two",2 }, {"Three",3}, {"Four",4}, {"Five",5},
         { "Six",6}, {"Seven",7},{ "Eight",8 }, { "Nine",9 },
         { "Ten",10 }, {"Jack",10 }, {"Queen",10 }, {"King",10 },
         { "Ace", 11 } };
 
+    //Each card has a Suit and Rank
+    //Point value is set via Value
     public string Suit { get; set; }
     public string Rank { get; set; }
     public int Point { get; set; }
@@ -36,8 +39,11 @@ namespace Blackjack
 
     public Player()
     {
-      Console.Write("Enter a name: ");
-      Name = Console.ReadLine();
+      do
+      {
+        Console.Write("Enter a name: ");
+        Name = Console.ReadLine();
+      } while (Name == "");
       Chips = 100;
       Bet = 5;
     }
@@ -55,9 +61,10 @@ namespace Blackjack
 
   class DeckHand
   {
+    //DeckHand covers both groups of cards whether it is the deck or the hand of a player
     public List<Card> Deck { get; set; }
-    public int Score { get; set; }
-    public bool Blackjack { get; set; }
+    public int Score { get; set; } //Score gives the total value of a hand
+    public bool Blackjack { get; set; } //Blackjack is a bool set to signify if the initial hand is a blackjack
 
     string[] Suit = new string[] { "Hearts", "Diamonds", "Clubs", "Spades" };
     string[] Rank = new string[] { "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace" };
@@ -82,7 +89,7 @@ namespace Blackjack
       List<Card> SortedTemp;
       Score = 0;
       SortedTemp = Deck.OrderBy(o => o.Point).ToList();
-      foreach (Card k in Deck)
+      foreach (Card k in SortedTemp)
       {
         //check to see if the Ace pushes over 21, if so make it worth one
         if (k.Point != 11)
@@ -102,6 +109,7 @@ namespace Blackjack
       Deck.Clear();
     }
 
+    //Creating the deck
     public void Create()
     {
       Clear();
@@ -114,6 +122,7 @@ namespace Blackjack
       }
     }
 
+    //Shuffling the deck
     public void Shuffle()
     {
       Random rng = new Random();
@@ -130,9 +139,10 @@ namespace Blackjack
 
     public void Print(string turn, int end = 0)
     {
-      bool hide = true;
+      bool hide = true; //hide the first card of the dealer
       string possess;
 
+      //Check the possession display for the player's turn
       if (char.ToLower(turn[turn.Length - 1]) == 's')
         possess = "'";
       else
@@ -141,6 +151,8 @@ namespace Blackjack
       Console.WriteLine(turn + possess + " Hand: ");
       foreach (Card k in Deck)
       {
+        //hide the dealer's first card until the end
+        //if end is anything but 0, show the card
         if (turn == "Dealer" && hide == true && end == 0)
           Console.WriteLine("********************");
         else
@@ -149,8 +161,8 @@ namespace Blackjack
       }
       Console.WriteLine();
 
-      /*if (turn != "Dealer's")
-        Console.WriteLine(turn + " Total: " + Score + "\n");*/
+      if (turn != "Dealer")
+        Console.WriteLine(turn + " Total: " + Score + "\n");
     }
 
     public bool CheckBust()
@@ -161,6 +173,8 @@ namespace Blackjack
 
     public void CheckBJ()
     {
+      //check point values for a blackjack by a list
+      //if the list is empty then whomever is being checked has a blackjack
       List<int> bj = new List<int> { 10, 11 };
       foreach (Card k in Deck)
       {
@@ -196,6 +210,23 @@ namespace Blackjack
 
       while (game)
       {
+        //Reset chips if player runs out of money or leave
+        if (play.Chips <= 0)
+        {
+          do
+          {
+            Console.Clear();
+            Console.WriteLine("Out of money. Reset balance?\nYes (Enter) Leave Table (ESC)");
+            key_press = Console.ReadKey();
+            if (key_press.Key == ConsoleKey.Enter)
+              play.Chips = 100;
+            if (key_press.Key == ConsoleKey.Escape)
+              break;
+          } while (key_press.Key != ConsoleKey.Enter && key_press.Key != ConsoleKey.Escape);
+          if (key_press.Key == ConsoleKey.Escape)
+            break;
+        }
+
         do
         {
           player.Score = 0;
@@ -272,12 +303,12 @@ namespace Blackjack
 
         Print(player, dealer, play, 1);
 
+        //check to see who wins and if anyone busted
         if (player.Blackjack)
           Console.WriteLine(play.Name + "has blackjack!");
         if (dealer.Blackjack)
           Console.WriteLine("Dealer has blackjack!");
 
-        //check to see who wins and if anyone busted
         if (dealer.CheckBust())
           Console.WriteLine("Dealer busts!");
         if (player.CheckBust())
