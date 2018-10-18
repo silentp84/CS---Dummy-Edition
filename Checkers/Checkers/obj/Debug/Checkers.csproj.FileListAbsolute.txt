@@ -1,0 +1,7 @@
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\bin\Debug\Checkers.exe.config
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\bin\Debug\Checkers.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\bin\Debug\Checkers.pdb
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\obj\Debug\Checkers.csprojAssemblyReference.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\obj\Debug\Checkers.csproj.CoreCompileInputs.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\obj\Debug\Checkers.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Checkers\Checkers\obj\Debug\Checkers.pdb
