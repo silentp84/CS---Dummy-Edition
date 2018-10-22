@@ -1,0 +1,7 @@
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\bin\Debug\Cursor Exercises.exe.config
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\bin\Debug\Cursor Exercises.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\bin\Debug\Cursor Exercises.pdb
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\obj\Debug\Cursor Exercises.csprojAssemblyReference.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\obj\Debug\Cursor Exercises.csproj.CoreCompileInputs.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\obj\Debug\Cursor Exercises.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\Cursor Exercises\Cursor Exercises\obj\Debug\Cursor Exercises.pdb

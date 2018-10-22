@@ -1,0 +1,7 @@
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\bin\Debug\SampleCheck.exe.config
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\bin\Debug\SampleCheck.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\bin\Debug\SampleCheck.pdb
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\obj\Debug\SampleCheck.csprojAssemblyReference.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\obj\Debug\SampleCheck.csproj.CoreCompileInputs.cache
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\obj\Debug\SampleCheck.exe
+C:\Users\Paul\Desktop\git_hub - CS\CS---Dummy-Edition\SampleCheck\SampleCheck\obj\Debug\SampleCheck.pdb
