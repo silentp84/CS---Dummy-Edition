@@ -98,25 +98,25 @@ namespace Blackjack
         while (dealer.Score <= 15 && !player.CheckBust() && !player.Blackjack && !dealer.Blackjack)
         {
           Console.Clear();
-            player.Print(play.Name);
-            dealer.Print("Dealer's");
-            if (dealer.Score > 15)
-            {
-              Console.WriteLine("Dealer stays...");
-              Thread.Sleep(2000);
-              break;
-            }
-            else
-            {
-              dealer.AddCard(deck);
-              Print(player, dealer, play);
-              Console.WriteLine("Dealer hits...");
-              Thread.Sleep(2000);
-            }
-
-            if (dealer.CheckBust())
-              break;
+          player.Print(play.Name);
+          dealer.Print("Dealer's");
+          if (dealer.Score > 15)
+          {
+            Console.WriteLine("Dealer stays...");
+            Thread.Sleep(2000);
+            break;
           }
+          else
+          {
+            dealer.AddCard(deck);
+            Print(player, dealer, play);
+            Console.WriteLine("Dealer hits...");
+            Thread.Sleep(2000);
+          }
+
+          if (dealer.CheckBust())
+            break;
+        }
 
         result = CheckWin(player.Score, dealer.Score);
 
@@ -162,6 +162,35 @@ namespace Blackjack
       Console.WriteLine();
       p.Print(n.Name);
       d.Print("Dealer", end);
+    }
+
+    public void Print(string turn, int end = 0)
+    {
+      Console.Clear();
+      bool hide = true; //hide the first card of the dealer
+      string possess;
+
+      //Check the possession display for the player's turn
+      if (char.ToLower(turn[turn.Length - 1]) == 's')
+        possess = "'";
+      else
+        possess = "'s";
+
+      Console.WriteLine(turn + possess + " Hand: ");
+      foreach (Card k in Deck)
+      {
+        //hide the dealer's first card until the end
+        //if end is anything but 0, show the card
+        if (turn == "Dealer" && hide == true && end == 0)
+          Console.WriteLine("********************");
+        else
+          Console.WriteLine(k.Rank + " of " + k.Suit + " ");
+        hide = false;
+      }
+      Console.WriteLine();
+
+      if (turn != "Dealer")
+        Console.WriteLine(turn + " Total: " + Score + "\n");
     }
   }
 }
