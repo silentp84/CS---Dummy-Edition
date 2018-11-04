@@ -84,33 +84,7 @@ namespace Blackjack
       }
     }
 
-    public void Print(string turn, int end = 0)
-    {
-      bool hide = true; //hide the first card of the dealer
-      string possess;
-
-      //Check the possession display for the player's turn
-      if (char.ToLower(turn[turn.Length - 1]) == 's')
-        possess = "'";
-      else
-        possess = "'s";
-
-      Console.WriteLine(turn + possess + " Hand: ");
-      foreach (Card k in Deck)
-      {
-        //hide the dealer's first card until the end
-        //if end is anything but 0, show the card
-        if (turn == "Dealer" && hide == true && end == 0)
-          Console.WriteLine("********************");
-        else
-          Console.WriteLine(k.Rank + " of " + k.Suit + " ");
-        hide = false;
-      }
-      Console.WriteLine();
-
-      if (turn != "Dealer")
-        Console.WriteLine(turn + " Total: " + Score + "\n");
-    }
+    
 
     public bool CheckBust()
     {
