@@ -50,6 +50,11 @@ namespace Blackjack
         {
           player.Score = 0;
           dealer.Score = 0;
+          player.Blackjack = false;
+          dealer.Blackjack = false;
+
+          if (play.Bet > play.Chips)
+            play.Bet = play.Chips;
 
           Console.Clear();
           play.Print();
@@ -97,6 +102,25 @@ namespace Blackjack
         //house's turn
         while (dealer.Score <= 15 && !player.CheckBust() && !player.Blackjack && !dealer.Blackjack)
         {
+<<<<<<< HEAD
+          Print(player, dealer, play);
+          if (dealer.Score > 15)
+            {
+              Console.WriteLine("Dealer stays...");
+              Thread.Sleep(2000);
+              break;
+            }
+            else
+            {
+              dealer.AddCard(deck);
+              Print(player, dealer, play);
+              Console.WriteLine("Dealer hits...");
+              Thread.Sleep(2000);
+            }
+
+            if (dealer.CheckBust())
+              break;
+=======
           Console.Clear();
           player.Print(play.Name);
           dealer.Print("Dealer's");
@@ -112,6 +136,7 @@ namespace Blackjack
             Print(player, dealer, play);
             Console.WriteLine("Dealer hits...");
             Thread.Sleep(2000);
+>>>>>>> c999e53207808577442d8ddeea6d842b058620fd
           }
 
           if (dealer.CheckBust())
@@ -124,7 +149,7 @@ namespace Blackjack
 
         //check to see who wins and if anyone busted
         if (player.Blackjack)
-          Console.WriteLine(play.Name + "has blackjack!");
+          Console.WriteLine(play.Name + " has blackjack!");
         if (dealer.Blackjack)
           Console.WriteLine("Dealer has blackjack!");
 
@@ -156,12 +181,42 @@ namespace Blackjack
       return Math.Max(p_score, d_score);
     }
 
-    public static void Print(DeckHand p, DeckHand d, Player n, int end = 0)
+    static public void Print(DeckHand p, DeckHand d, Player n, int end = 0)
     {
+      bool hide = true; //hide the first card of the dealer
+      string possess;
+
+      //Check the possession display for the player's turn
+      if (char.ToLower(n.Name[n.Name.Length - 1]) == 's')
+        possess = "'";
+      else
+        possess = "'s";
+
       Console.Clear();
-      Console.WriteLine();
-      p.Print(n.Name);
-      d.Print("Dealer", end);
+      Console.WriteLine(n.Name + possess + " Hand: ");
+
+      foreach (Card k in p.Deck)
+      {
+        Console.WriteLine(k.Rank + " of " + k.Suit + " ");
+      }
+
+      Console.WriteLine("\nDealer's Hand: ");
+
+      foreach (Card k in d.Deck)
+      {
+        //hide the dealer's first card until the end
+        //if end is anything but 0, show the card
+        if(hide && end == 0)
+          Console.WriteLine("********************");
+        else
+          Console.WriteLine(k.Rank + " of " + k.Suit + " ");
+        hide = false;
+      }
+      Console.WriteLine("\n" + n.Name + " Total: " + p.Score);
+      if (end != 0)
+        Console.WriteLine("Dealer's Total: " + d.Score + "\n");
+      else
+        Console.WriteLine();
     }
 
     public void Print(string turn, int end = 0)
