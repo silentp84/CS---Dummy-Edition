@@ -15,11 +15,38 @@ namespace Checkers
       Player comp = new Player("Computer");
 
       bool game = true;
-      PrintBoard(gameBoard);
+      bool select = false;
+      string cPair;
+      int c1 = 0;
+      char c2;
 
-      while (game)
+      Console.WriteLine(Char.GetNumericValue('b'));
+
+      while(game)
       {
-
+        while (!select)
+        {
+          Console.Clear();
+          PrintBoard(gameBoard);
+          Console.WriteLine("Select a piece to move by typing coordinates. (e.g. '5A')");
+          cPair = Console.ReadLine();
+          if(cPair.Length == 2)
+          {
+            c1 = (int)Char.GetNumericValue(cPair[0]);
+            c2 = cPair[1];
+            if(c1 < 0 || c1 > 8 || c2 < 'A' || c2 > 'H')
+            { 
+              Console.WriteLine("Invalid entry.");
+              Console.Read();
+            }
+            else
+            {
+              select = true;
+              Console.WriteLine("c1: " + c1 + "\nc2: " + c2);
+            }
+          }            
+        }
+        break;
       }
     }
 
@@ -44,6 +71,8 @@ namespace Checkers
         }
         row = !row;
       }
+      Console.WriteLine("\n----------------------------\n");
+
     }
   }
 }
