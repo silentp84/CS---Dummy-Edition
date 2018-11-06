@@ -11,6 +11,8 @@ namespace Checkers
     static void Main(string[] args)
     {
       Board gameBoard = new Board();
+      gameBoard.Reset();
+
       Player user = new Player("Frank");
       Player comp = new Player("Computer");
 
@@ -26,7 +28,6 @@ namespace Checkers
       {
         while (!select)
         {
-          Console.Clear();
           PrintBoard(gameBoard);
           Console.WriteLine("Select a piece to move by typing coordinates. (e.g. '5A')");
           cPair = Console.ReadLine();
@@ -34,7 +35,7 @@ namespace Checkers
           {
             c1 = (int)Char.GetNumericValue(cPair[0]);
             c2 = cPair[1];
-            if(c1 < 0 || c1 > 8 || c2 < 'A' || c2 > 'H')
+            if (c1 < 0 || c1 > 8 || c2 < 'A' || c2 > 'H')
             { 
               Console.WriteLine("Invalid entry.");
               Console.Read();
@@ -50,10 +51,11 @@ namespace Checkers
       }
     }
 
-    static void PrintBoard(Board piece)
+    static void PrintBoard(Board layout)
     {
-      bool row = true;
+      bool row = true; //true = make a space for the first location on the board
 
+      Console.Clear();
       Console.Write("     A  B  C  D  E  F  G  H");
 
       for (int i = 0; i < 8; i++)
@@ -64,7 +66,7 @@ namespace Checkers
         {
           if (row)
             Console.Write("  |");
-          Console.Write(piece.Piece[piece.GameBoard[i, j]]);
+          Console.Write(layout.GameBoard[i,j].disp);
           Console.Write("|");
           if (!row)
             Console.Write("  |");
