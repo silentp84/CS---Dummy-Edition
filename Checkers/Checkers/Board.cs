@@ -10,64 +10,26 @@ namespace Checkers
   {
     // 0 empty 1 player 2 computer 3 player(king) 4 computer(king) from Piece class
 
-    public List<Piece> PieceBoard { get; set; } //a list of the actual pieces with location and piece types
     public Piece[,] GameBoard { get; set; } //a multidimensional array that states if a position is occupied or not
 
     public Board()
     {
-      List<Piece> PieceBoard = new List<Piece>();
-      GameBoard = new Piece[8, 4];
+      GameBoard = new Piece[8, 8];
+      Reset();
     }
 
     public void Reset()
     {
-      bool ColOffset = true;
-      //y is row coordinate, x is col coordinate
-      for (int y = 0; y < 3; y++) //set computer pieces
+      for (int row = 0; row < 3; row++) //set computer pieces
       {
-        for (int x = 0; x < 8; x += 2)
+        for (int col = 0; col < 8; col += 2)
         {
-          if (ColOffset == true)
-          {
-            x += 1;
-          }
-          PieceBoard.Add(new Piece(x, y, 2)); //add piece to a list
-        }
-        ColOffset = !ColOffset;
-      }
+          int index = row % 2 == 0 ? col + 1 + 8 * row : col + 8 * row;
 
-      for (int y = 0; y < 2; y++) //set empty locations
-      {
-        for (int x = 0; x < 8; x += 2)
-        {
-          if (ColOffset == true)
-          {
-            x += 1;
-          }
-          PieceBoard.Add(new Piece(x, y, 0));
-        }
-        ColOffset = !ColOffset;
-      }
-
-      for (int y = 0; y < 3; y++) //set player pieces
-      {
-        for (int x = 0; x < 8; x += 2)
-        {
-          if (ColOffset == true)
-          {
-            x += 1;
-          }
-          PieceBoard.Add(new Piece(x, y, 1));
-        }
-        ColOffset = !ColOffset;
-      }
-
-      for (int y = 0; y < 8; y++)
-      {
-        for (int x = 0; x < 4; x++)
-        {
-          GameBoard[y, x] = PieceBoard[0];
-          PieceBoard.RemoveAt(0);
+          Piece black = new Piece(index % 8, row, 2);
+          Piece red = new Piece(7 - index % 8, 7 - row, 1);
+          GameBoard[black.locy, black.locxInt] = black;
+          GameBoard[red.locy, red.locxInt] = red;
         }
       }
     }

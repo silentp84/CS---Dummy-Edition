@@ -11,7 +11,6 @@ namespace Checkers
     static void Main(string[] args)
     {
       Board gameBoard = new Board();
-      gameBoard.Reset();
 
       Player user = new Player("Frank");
       Player comp = new Player("Computer");
@@ -53,7 +52,6 @@ namespace Checkers
 
     static void PrintBoard(Board layout)
     {
-      bool row = true; //true = make a space for the first location on the board
 
       Console.Clear();
       Console.Write("     A  B  C  D  E  F  G  H");
@@ -62,16 +60,18 @@ namespace Checkers
       {
         Console.WriteLine("\n----------------------------");
         Console.Write(i + " | ");
-        for (int j = 0; j < 4; j++)
+        for (int j = 0; j < 8; j++)
         {
-          if (row)
-            Console.Write("  |");
-          Console.Write(layout.GameBoard[i,j].disp);
+          if (layout.GameBoard[i, j] == null)
+          {
+            Console.Write("  ");
+          }
+          else
+          {
+            Console.Write(layout.GameBoard[i, j].disp);
+          }
           Console.Write("|");
-          if (!row)
-            Console.Write("  |");
         }
-        row = !row;
       }
       Console.WriteLine("\n----------------------------\n");
 
