@@ -17,9 +17,11 @@ namespace Checkers
 
       bool game = true;
       bool select = false;
+      bool doublejump = false;
       string cPair;
       int c1 = 0;
       char c2;
+
 
       Console.WriteLine(Char.GetNumericValue('b'));
 
@@ -28,21 +30,30 @@ namespace Checkers
         while (!select)
         {
           PrintBoard(gameBoard);
-          Console.WriteLine("Select a piece to move by typing coordinates. (e.g. '5A')");
+          Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
           cPair = Console.ReadLine();
           if(cPair.Length == 2)
           {
             c1 = (int)Char.GetNumericValue(cPair[0]);
             c2 = cPair[1];
-            if (c1 < 0 || c1 > 8 || c2 < 'A' || c2 > 'H')
+            if ((c1 < 0 || c1 > 7 || c2 < 'A' || c2 > 'H') && cPair.Length != 2)
             { 
               Console.WriteLine("Invalid entry.");
               Console.Read();
             }
             else
             {
-              select = true;
-              Console.WriteLine("c1: " + c1 + "\nc2: " + c2);
+              gameBoard.GetRequiredJumps_Moves();
+              if(!gameBoard.JumpCoordinates.Any())
+              {
+                Console.WriteLine("No available jumps.");
+              }
+              foreach(int[] jumps in gameBoard.JumpCoordinates)
+              {
+                Console.Write("Available jumps: " + jumps);
+              }
+              
+              break;
             }
           }            
         }
@@ -54,12 +65,12 @@ namespace Checkers
     {
 
       Console.Clear();
-      Console.Write("     A  B  C  D  E  F  G  H");
+      Console.Write("       A  B  C  D  E  F  G  H");
 
       for (int i = 0; i < 8; i++)
       {
-        Console.WriteLine("\n----------------------------");
-        Console.Write(i + " | ");
+        Console.WriteLine("\n---------------------------------");
+        Console.Write("| " + i + " | ");
         for (int j = 0; j < 8; j++)
         {
           if (layout.GameBoard[i, j] == null)
@@ -68,13 +79,14 @@ namespace Checkers
           }
           else
           {
-            Console.Write(layout.GameBoard[i, j].disp);
+            Console.Write(layout.GameBoard[i, j].PieceType);
           }
           Console.Write("|");
         }
+        Console.Write(" " + i + " |");
       }
-      Console.WriteLine("\n----------------------------\n");
-
+      Console.Write("\n---------------------------------\n");
+      Console.WriteLine("       A  B  C  D  E  F  G  H\n");
     }
   }
 }
