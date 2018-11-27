@@ -17,10 +17,9 @@ namespace Checkers
 
       bool game = true;
       bool select = false;
-      bool doublejump = false;
       string cPair;
-      int c1 = 0;
-      char c2;
+      int crow;
+      int ccol;
 
 
       Console.WriteLine(Char.GetNumericValue('b'));
@@ -30,20 +29,21 @@ namespace Checkers
         while (!select)
         {
           PrintBoard(gameBoard);
+          Console.WriteLine(gameBoard.Player + " player's turn: ");
           Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
           cPair = Console.ReadLine();
           if(cPair.Length == 2)
           {
-            c1 = (int)Char.GetNumericValue(cPair[0]);
-            c2 = cPair[1];
-            if ((c1 < 0 || c1 > 7 || c2 < 'A' || c2 > 'H') && cPair.Length != 2)
+            crow = cPair[0];
+            ccol = (int)Char.GetNumericValue(cPair[1]);
+            if (!gameBoard.CheckCoordinate(crow, ccol, cPair.Length))
             { 
               Console.WriteLine("Invalid entry.");
               Console.Read();
             }
             else
             {
-              gameBoard.GetRequiredJumps_Moves();
+              gameBoard.Move(crow, ccol);
               if(!gameBoard.JumpCoordinates.Any())
               {
                 Console.WriteLine("No available jumps.");

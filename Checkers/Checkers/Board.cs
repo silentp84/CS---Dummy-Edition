@@ -17,7 +17,7 @@ namespace Checkers
     public List<int[]> MoveCoordinates { get; set; }
     private List<int[]> JumpDirections { get; set; }
 
-    public bool Player { get; set; }
+    public string Player { get; set; }
 
     public Board()
     {
@@ -31,7 +31,7 @@ namespace Checkers
         new int[] { -1, -1 },
         new int[] { -1, 1 }
       };
-      Player = true;
+      Player = "Red";
       Reset();
     }
 
@@ -86,6 +86,28 @@ namespace Checkers
      * If it's true display the location as a possible move
      */
 
+    public void Move(int row, int col)
+    {
+      GetRequiredJumps_Moves();
+    }
+
+    public bool CheckCoordinate(int row, int col, int len)
+    {
+      if ((row < 0 || row > 7 || col < 'A' || col > 'H') && len!=2)
+      {
+        return false;
+      }
+
+      if (GameBoard[row, col].PieceType[0] == Player[0])
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     //Check Jump
     /*
      * Take a (coordinate pair X 2) that checks the jump possibility
@@ -116,7 +138,7 @@ namespace Checkers
           {
             if (GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
             {
-              MoveCoordinates.Add(new int[] { piecetocheck.Row, piecetocheck.ColInt });
+              MoveCoordinates.Add(new int[] { jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
             }
           }
           catch (IndexOutOfRangeException)
@@ -148,7 +170,7 @@ namespace Checkers
           {
             if (GameBoard[-1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt] == null)
             {
-              MoveCoordinates.Add(new int[] { piecetocheck.Row, piecetocheck.ColInt });
+              MoveCoordinates.Add(new int[] { -1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt });
             }
           }
           catch (IndexOutOfRangeException)
@@ -157,7 +179,6 @@ namespace Checkers
           }
         }
       }
-
       return false;
     }
 
@@ -165,7 +186,7 @@ namespace Checkers
     {
       JumpCoordinates.Clear();
       MoveCoordinates.Clear();
-      if (Player == true)
+      if (Player == "Red")
       {
         foreach (Piece red in Reds)
         {
