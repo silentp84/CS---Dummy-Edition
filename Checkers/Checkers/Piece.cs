@@ -21,6 +21,9 @@ namespace Checkers
     public int Row { get; set; } // row location integer value
     public string PieceType { get; set; } // piece type => see PieceKey dictionary
     public int[] Coordinate {get; set;}
+    public List<int[]> Jumps { get; set; }
+    public List<int[]> Moves { get; set; }
+
 
     public Piece(int row, int col, string pt)
     {
@@ -29,6 +32,8 @@ namespace Checkers
       Row = row;
       PieceType = pt;
       Coordinate = new int[] { row, col };
+      Jumps = new List<int[]>();
+      Moves = new List<int[]>();
     }
 
     public Piece(int row, char col, string pt)

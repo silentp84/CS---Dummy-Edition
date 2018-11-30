@@ -10,12 +10,15 @@ namespace Checkers
   {
     // 0 empty 1 player 2 computer 3 player(king) 4 computer(king) from Piece class
 
-    public Piece[,] GameBoard { get; set; } //a multidimensional array that states if a position is occupied or not
-    public List<Piece> Reds { get; set; }
-    public List<Piece> Blacks { get; set; }
+    public Piece[,] GameBoard { get; set; } //a multidimensional array of pieces
+    private List<Piece> Reds { get; set; }
+    private List<Piece> Blacks { get; set; }
     public List<int[]> JumpCoordinates { get; set; }
-    public List<int[]> MoveCoordinates { get; set; }
     private List<int[]> JumpDirections { get; set; }
+    public int Row;
+    public int Col;
+    public int TargetRow;
+    public int TargetCol;
 
     public string Player { get; set; }
 
@@ -25,7 +28,6 @@ namespace Checkers
       Reds = new List<Piece>();
       Blacks = new List<Piece>();
       JumpCoordinates = new List<int[]>();
-      MoveCoordinates = new List<int[]>();
       JumpDirections = new List<int[]>
       {
         new int[] { -1, -1 },
@@ -85,21 +87,47 @@ namespace Checkers
      *        cycle through (call location moves for remainder of moves)
      * If it's true display the location as a possible move
      */
-
-    public void Move(int row, int col)
+    public void CheckValidMove()
     {
-      GetRequiredJumps_Moves();
+
     }
 
-    public bool CheckCoordinate(int row, int col, int len)
+    public bool MoveJump(int row, int col)
     {
-      if ((row < 0 || row > 7 || col < 'A' || col > 'H') && len!=2)
+      
+    }
+
+    public bool Jump(int row, int col)
+    {
+
+    }
+
+    public bool IsMovePossible()
+    {
+      Piece temp = new Piece
+    }
+
+    public bool MoveRequiresJump()
+    {
+      return JumpCoordinates.Any() && !GameBoard[Row, Col].Jumps.Any();
+    }
+
+    public bool MovePossible()
+    {
+      return !GameBoard[Row, Col].Moves.Any();
+    }
+
+    public bool CheckValidPiece(int len)
+    {
+      
+      if ((Row < 0 || Row > 7 || Col < 0 || Col > 7) && len!=2)
       {
         return false;
       }
 
-      if (GameBoard[row, col].PieceType[0] == Player[0])
+      if (GameBoard[Row, Col].PieceType[0] == Player[0])
       {
+
         return true;
       }
       else
@@ -125,6 +153,8 @@ namespace Checkers
             {
               if (GameBoard[2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
               {
+                GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
+                (new int[] { 2 * jump[0] + piecetocheck.Row, 2* jump[1] + piecetocheck.ColInt });
                 return true;
               }
             }
@@ -138,7 +168,8 @@ namespace Checkers
           {
             if (GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
             {
-              MoveCoordinates.Add(new int[] { jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
+              GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
+                (new int[] { jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
             }
           }
           catch (IndexOutOfRangeException)
@@ -157,6 +188,8 @@ namespace Checkers
             {
               if (GameBoard[-2 * jump[0], -2 * jump[1]] == null)
               {
+                GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
+                (new int[] { 2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
                 return true;
               }
             }
@@ -170,7 +203,8 @@ namespace Checkers
           {
             if (GameBoard[-1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt] == null)
             {
-              MoveCoordinates.Add(new int[] { -1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt });
+              GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
+                (new int[] { -1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt });
             }
           }
           catch (IndexOutOfRangeException)
@@ -185,11 +219,12 @@ namespace Checkers
      public void GetRequiredJumps_Moves()
     {
       JumpCoordinates.Clear();
-      MoveCoordinates.Clear();
       if (Player == "Red")
       {
         foreach (Piece red in Reds)
         {
+          GameBoard[red.Row, red.ColInt].Jumps.Clear();
+          GameBoard[red.Row, red.ColInt].Moves.Clear();
           if (CheckDirections(red))
           {
             JumpCoordinates.Add(new int[] { red.Row, red.ColInt });
@@ -200,6 +235,8 @@ namespace Checkers
       {
         foreach (Piece black in Blacks)
         {
+          GameBoard[black.Row, black.ColInt].Jumps.Clear();
+          GameBoard[black.Row, black.ColInt].Moves.Clear();
           if (CheckDirections(black))
           {
             JumpCoordinates.Add(new int[] { black.Row, black.ColInt });

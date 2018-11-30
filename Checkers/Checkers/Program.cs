@@ -17,47 +17,85 @@ namespace Checkers
 
       bool game = true;
       bool select = false;
+      bool move = false;
       string cPair;
-      int crow;
-      int ccol;
-
 
       Console.WriteLine(Char.GetNumericValue('b'));
 
       while(game)
       {
-        while (!select)
+        while (!move)
         {
-          PrintBoard(gameBoard);
-          Console.WriteLine(gameBoard.Player + " player's turn: ");
-          Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
-          cPair = Console.ReadLine();
-          if(cPair.Length == 2)
+          while (!select)
           {
-            crow = cPair[0];
-            ccol = (int)Char.GetNumericValue(cPair[1]);
-            if (!gameBoard.CheckCoordinate(crow, ccol, cPair.Length))
-            { 
-              Console.WriteLine("Invalid entry.");
-              Console.Read();
+            PrintBoard(gameBoard);
+            Console.WriteLine(gameBoard.Player + " player's turn: ");
+            Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
+            cPair = Console.ReadLine();
+            if (cPair.Length == 2)
+            {
+              try
+              {
+                gameBoard.Row = (int)Char.GetNumericValue(cPair[0]);
+                gameBoard.Col = ((byte)cPair[1]) - 65;
+              }
+              catch (Exception)
+              {
+                Console.WriteLine("Invalid entry.");
+                Console.Read();
+                continue;
+              }
+              if (!gameBoard.CheckValidPiece(cPair.Length))
+              {
+                Console.WriteLine("Invalid entry.");
+                Console.Read();
+              }
+              else if (gameBoard.MoveRequiresJump())
+              {
+                Console.WriteLine("Invalid entry: You must select a piece that must make a jump.");
+                Console.Read();
+              }
+              else if (gameBoard.MovePossible())
+              {
+                Console.WriteLine("Invalid entry: You must select a piece that has moves.");
+                Console.Read();
+              }
+              else
+              {
+                Console.WriteLine("Acceptable entry.");
+                Console.Read();
+                select = true;
+              }
             }
             else
             {
-              gameBoard.Move(crow, ccol);
-              if(!gameBoard.JumpCoordinates.Any())
-              {
-                Console.WriteLine("No available jumps.");
-              }
-              foreach(int[] jumps in gameBoard.JumpCoordinates)
-              {
-                Console.Write("Available jumps: " + jumps);
-              }
-              
-              break;
+              Console.WriteLine("Invalid entry.");
+              Console.Read();
             }
-          }            
+          }
+          PrintBoard(gameBoard);
+          Console.WriteLine(gameBoard.Player + " player's turn: ");
+          Console.WriteLine("Select a target by typing coordinates. (e.g. '5A')");
+          cPair = Console.ReadLine();
+          if (cPair.Length == 2)
+          {
+            try
+            {
+              gameBoard.TargetRow = (int)Char.GetNumericValue(cPair[0]);
+              gameBoard.TargetCol = ((byte)cPair[1]) - 65;
+            }
+            catch (Exception)
+            {
+              Console.WriteLine("Invalid entry.");
+              Console.Read();
+              continue;
+            }
+            if(gameBoard.Move(crow, ccol, tcrow, tccol))
+            {
+              
+            }
+          }
         }
-        break;
       }
     }
 
