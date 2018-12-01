@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Checkers
 {
   class Board
@@ -56,7 +57,7 @@ namespace Checkers
     }
 
     //Check validate location
-    
+
     /*
      * Parameter should include the coordinate to be checked and a list of required jumps
      * Get the row and column and check if the piece/location is valid (if it's its own color)
@@ -87,28 +88,75 @@ namespace Checkers
      *        cycle through (call location moves for remainder of moves)
      * If it's true display the location as a possible move
      */
-    public void CheckValidMove()
-    {
 
+    public void Swap()
+    {
+      if (Player == "Red")
+      {
+        Player = "Black";
+      }
+      else
+      {
+        Player = "Red";
+      }
     }
 
-    public bool MoveJump(int row, int col)
+    public bool MoveJump()
     {
-      
+      if (Math.Abs(Row - TargetRow) == 1)
+      {
+        return Move();
+      }
+      else if (Math.Abs(Row - TargetRow) == 2)
+      {
+        return Jump(); 
+      }
+      else
+      {
+        Console.Write("I broke.");
+        Console.Read();
+        return false;
+      }
     }
 
-    public bool Jump(int row, int col)
+    public bool Move()
     {
-
+      Piece temp = GameBoard[Row, Col];
+      GameBoard[TargetRow, TargetCol] = temp;
+      GameBoard[Row, Col] = null;
+      return true;
     }
 
-    public bool IsMovePossible()
+    public bool Jump()
     {
-      Piece temp = new Piece
+      Piece temp = GameBoard[Row, Col];
+      GameBoard[TargetRow, TargetCol] = temp;
+      GameBoard[Row, Col] = null;
+      GameBoard[(Row+TargetRow)/2, (Col+TargetCol)/2] = null;
+      GetRequiredJumps_Moves();
+      return (!GameBoard[TargetRow, TargetCol].Jumps.Any());
+    }
+
+
+    public bool IsTargetValid()
+    {
+      if (GameBoard[Row,Col].Moves.Any(p => p.SequenceEqual(new int[2] { TargetRow, TargetCol })))
+      {
+        return true;
+      }
+      else if (GameBoard[Row, Col].Jumps.Any(p => p.SequenceEqual(new int[2] { TargetRow, TargetCol })))
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     public bool MoveRequiresJump()
     {
+      GetRequiredJumps_Moves();
       return JumpCoordinates.Any() && !GameBoard[Row, Col].Jumps.Any();
     }
 
