@@ -12,15 +12,10 @@ namespace Checkers
     {
       Board gameBoard = new Board();
 
-      Player user = new Player("Frank");
-      Player comp = new Player("Computer");
-
       bool game = true;
       bool select;
       bool move;
       string cPair;
-
-      Console.WriteLine(Char.GetNumericValue('b'));
 
       while(game)
       {
@@ -29,6 +24,7 @@ namespace Checkers
         while (!select)
         {
           PrintBoard(gameBoard);
+          gameBoard.GetRequiredJumps_Moves();
           Console.WriteLine(gameBoard.Player + " player's turn: ");
           Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
           cPair = Console.ReadLine();
@@ -37,40 +33,39 @@ namespace Checkers
             try
             {
               gameBoard.Row = (int)Char.GetNumericValue(cPair[0]);
-              gameBoard.Col = ((byte)cPair[1]) - 65;
+              gameBoard.Col = ((byte)Char.ToUpper(cPair[1])) - 65;
             }
             catch (Exception)
             {
               Console.WriteLine("Invalid entry.");
-              Console.Read();
+              Console.ReadLine();
               continue;
             }
+
             if (!gameBoard.CheckValidPiece(cPair.Length))
             {
               Console.WriteLine("Invalid entry.");
-              Console.Read();
+              Console.ReadLine();
             }
             else if (gameBoard.MoveRequiresJump())
             {
               Console.WriteLine("Invalid entry: You must select a piece that must make a jump.");
-              Console.Read();
+              Console.ReadLine();
             }
-            else if (gameBoard.MovePossible())
+            else if (gameBoard.MovePossible() && !gameBoard.MoveRequiresJump())
             {
               Console.WriteLine("Invalid entry: You must select a piece that has moves.");
-              Console.Read();
+              Console.ReadLine();
             }
             else
             {
-              Console.WriteLine("Acceptable entry.");
-              Console.Read();
               select = true;
             }
           }
           else
           {
             Console.WriteLine("Invalid entry: Need a length of at least 2.");
-            Console.Read();
+            Console.ReadLine();
           }
         }
 
@@ -85,22 +80,21 @@ namespace Checkers
             try
             {
               gameBoard.TargetRow = (int)Char.GetNumericValue(cPair[0]);
-              gameBoard.TargetCol = ((byte)cPair[1]) - 65;
+              gameBoard.TargetCol = ((byte)Char.ToUpper(cPair[1])) - 65;
             }
             catch (Exception)
             {
               Console.WriteLine("Invalid entry.");
-              Console.Read();
+              Console.ReadLine();
               continue;
             }
             if (!gameBoard.IsTargetValid())
             {
               Console.WriteLine("Target not valid.");
-              Console.Read();
+              Console.ReadLine();
             }
             else
             {
-              Console.WriteLine("Target is probably valid.");
               move = gameBoard.MoveJump();
               if (move)
               {
@@ -115,7 +109,6 @@ namespace Checkers
 
     static void PrintBoard(Board layout)
     {
-
       Console.Clear();
       Console.Write("       A  B  C  D  E  F  G  H");
 
@@ -136,6 +129,22 @@ namespace Checkers
           Console.Write("|");
         }
         Console.Write(" " + i + " |");
+        if (i == 0)
+        {
+          Console.Write("\tRR - Red Piece");
+        }
+        else if(i == 1)
+        {
+          Console.Write("\tRK - Red King");
+        }
+        else if(i == 2)
+        {
+          Console.Write("\tBB - Black Piece");
+        }
+        else if(i == 3)
+        {
+          Console.Write("\tBK - Black King");
+        }
       }
       Console.Write("\n---------------------------------\n");
       Console.WriteLine("       A  B  C  D  E  F  G  H\n");

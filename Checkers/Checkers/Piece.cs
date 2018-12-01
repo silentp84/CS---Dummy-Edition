@@ -8,7 +8,6 @@ namespace Checkers
 {
   class Piece
   {
-    // 0 empty 1 player 2 computer 3 player(king) 4 computer(king)
     private readonly Dictionary<int, char> IntToChar = new Dictionary<int, char>
                                       { { 0, 'A' }, { 1, 'B' }, { 2, 'C' }, { 3, 'D' },
                                         { 4, 'E' }, { 5, 'F' }, { 6, 'G' }, { 7, 'H' } };
@@ -19,30 +18,29 @@ namespace Checkers
     public int ColInt { get; set; } //col location integer value
     public char ColChar { get; set; } //col location char value
     public int Row { get; set; } // row location integer value
-    public string PieceType { get; set; } // piece type => see PieceKey dictionary
-    public int[] Coordinate {get; set;}
+    public string PieceType { get; set; } 
     public List<int[]> Jumps { get; set; }
     public List<int[]> Moves { get; set; }
+    public int ID { get; set; }
 
-
-    public Piece(int row, int col, string pt)
+    public Piece(int row, int col, string pt, int id = -1)
     {
       ColInt = col;
       ColChar = IntToChar[col];
       Row = row;
       PieceType = pt;
-      Coordinate = new int[] { row, col };
       Jumps = new List<int[]>();
       Moves = new List<int[]>();
+      ID = id;
     }
 
-    public Piece(int row, char col, string pt)
+    public Piece(int row, char col, string pt, int id = -1)
     {
       ColChar = col;
       ColInt = CharToInt[col];
       Row = row;
       PieceType = pt;
-      Coordinate = new int[] { row, col };
+      ID = id;
     }
 
     public bool Compare(Piece other)

@@ -20,6 +20,7 @@ namespace Checkers
     public int Col;
     public int TargetRow;
     public int TargetCol;
+    private int Remove;
 
     public string Player { get; set; }
 
@@ -40,18 +41,20 @@ namespace Checkers
 
     public void Reset()
     {
+      int id = 0;
       for (int row = 0; row < 3; row++)
       {
         for (int col = 0; col < 8; col += 2)
         {
           int index = row % 2 == 0 ? col + 1 + 8 * row : col + 8 * row;
 
-          Piece black = new Piece(row, index % 8, "BB");
-          Piece red = new Piece( 7 - row, 7 - index % 8, "RR");
+          Piece black = new Piece(row, index % 8, "BB", id);
+          Piece red = new Piece(7 - row, 7 - index % 8, "RR", id);
           GameBoard[black.Row, black.ColInt] = black;
           Blacks.Add(black);
           GameBoard[red.Row, red.ColInt] = red;
           Reds.Add(red);
+          id++;
         }
       }
     }
@@ -109,7 +112,7 @@ namespace Checkers
       }
       else if (Math.Abs(Row - TargetRow) == 2)
       {
-        return Jump(); 
+        return Jump();
       }
       else
       {
@@ -122,6 +125,8 @@ namespace Checkers
     public bool Move()
     {
       Piece temp = GameBoard[Row, Col];
+      temp.Row = TargetRow;
+      temp.ColInt = TargetCol;
       GameBoard[TargetRow, TargetCol] = temp;
       GameBoard[Row, Col] = null;
       return true;
@@ -130,17 +135,45 @@ namespace Checkers
     public bool Jump()
     {
       Piece temp = GameBoard[Row, Col];
+      temp.Row = TargetRow;
+      temp.ColInt = TargetCol;
       GameBoard[TargetRow, TargetCol] = temp;
       GameBoard[Row, Col] = null;
-      GameBoard[(Row+TargetRow)/2, (Col+TargetCol)/2] = null;
+      DeletePiece();
+      GameBoard[(Row + TargetRow) / 2, (Col + TargetCol) / 2] = null;
       GetRequiredJumps_Moves();
       return (!GameBoard[TargetRow, TargetCol].Jumps.Any());
     }
 
+    public void DeletePiece()
+    {
+      if (Player == "Red")
+      {
+        foreach (Piece black in Blacks)
+        {
+          if (GameBoard[(Row + TargetRow) / 2, (Col + TargetCol) / 2].ID == black.ID)
+          {
+            Remove = black.ID;
+          }
+        }
+        Blacks.RemoveAt(Remove);
+      }
+      else if (Player == "Black")
+      {
+        foreach (Piece red in Reds)
+        {
+          if (GameBoard[(Row + TargetRow) / 2, (Col + TargetCol) / 2].ID == red.ID)
+          {
+            Remove = red.ID;
+          }
+        }
+        Reds.RemoveAt(Remove);
+      }
+    }
 
     public bool IsTargetValid()
     {
-      if (GameBoard[Row,Col].Moves.Any(p => p.SequenceEqual(new int[2] { TargetRow, TargetCol })))
+      if (GameBoard[Row, Col].Moves.Any(p => p.SequenceEqual(new int[2] { TargetRow, TargetCol })))
       {
         return true;
       }
@@ -156,7 +189,6 @@ namespace Checkers
 
     public bool MoveRequiresJump()
     {
-      GetRequiredJumps_Moves();
       return JumpCoordinates.Any() && !GameBoard[Row, Col].Jumps.Any();
     }
 
@@ -167,8 +199,7 @@ namespace Checkers
 
     public bool CheckValidPiece(int len)
     {
-      
-      if ((Row < 0 || Row > 7 || Col < 0 || Col > 7) && len!=2)
+      if (Row < 0 || Row > 7 || Col < 0 || Col > 7 || GameBoard[Row, Col] == null)
       {
         return false;
       }
@@ -189,7 +220,7 @@ namespace Checkers
      * Take a (coordinate pair X 2) that checks the jump possibility
      * 
      */
-     public bool CheckDirections(Piece piecetocheck)
+    public bool CheckDirections(Piece piecetocheck)
     {
       if (piecetocheck.PieceType[0] == 'R' || piecetocheck.PieceType[1] == 'K')
       {
@@ -202,7 +233,7 @@ namespace Checkers
               if (GameBoard[2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
               {
                 GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
-                (new int[] { 2 * jump[0] + piecetocheck.Row, 2* jump[1] + piecetocheck.ColInt });
+                (new int[] { 2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
                 return true;
               }
             }
@@ -232,12 +263,12 @@ namespace Checkers
         {
           try
           {
-            if (piecetocheck.Compare(GameBoard[-1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt]))
+            if (piecetocheck.Compare(GameBoard[-1 * jump[0] + piecetocheck.Row, 1 * jump[1] + piecetocheck.ColInt]))
             {
-              if (GameBoard[-2 * jump[0], -2 * jump[1]] == null)
+              if (GameBoard[-2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
               {
                 GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
-                (new int[] { 2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
+                (new int[] { -2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
                 return true;
               }
             }
@@ -264,7 +295,7 @@ namespace Checkers
       return false;
     }
 
-     public void GetRequiredJumps_Moves()
+    public void GetRequiredJumps_Moves()
     {
       JumpCoordinates.Clear();
       if (Player == "Red")
@@ -279,7 +310,8 @@ namespace Checkers
           }
         }
       }
-      else
+
+      if (Player == "Black")
       {
         foreach (Piece black in Blacks)
         {
