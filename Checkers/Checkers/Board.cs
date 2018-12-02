@@ -12,9 +12,10 @@ namespace Checkers
     // 0 empty 1 player 2 computer 3 player(king) 4 computer(king) from Piece class
 
     public Piece[,] GameBoard { get; set; } //a multidimensional array of pieces
-    private List<Piece> Reds { get; set; }
-    private List<Piece> Blacks { get; set; }
-    public List<int[]> JumpCoordinates { get; set; }
+    public List<Piece> Reds { get; set; }
+    public List<Piece> Blacks { get; set; }
+    public bool JumpRequiredBlack { get; set; }
+    public bool JumpRequiredRed { get; set; }
     private List<int[]> JumpDirections { get; set; }
     public int Row;
     public int Col;
@@ -29,7 +30,8 @@ namespace Checkers
       GameBoard = new Piece[8, 8];
       Reds = new List<Piece>();
       Blacks = new List<Piece>();
-      JumpCoordinates = new List<int[]>();
+      JumpRequiredRed = false;
+      JumpRequiredBlack = false;
       JumpDirections = new List<int[]>
       {
         new int[] { -1, -1 },
@@ -189,15 +191,39 @@ namespace Checkers
 
     public bool MoveRequiresJump()
     {
-      return JumpCoordinates.Any() && !GameBoard[Row, Col].Jumps.Any();
+      //required jumps True - False
+      //does the piece have no jumps? True - False
+      if (Player == "Red")
+      {
+        return JumpRequiredRed && !GameBoard[Row, Col].Jumps.Any();
+      }
+      else
+      {
+        return JumpRequiredBlack && !GameBoard[Row, Col].Jumps.Any();
+      }
     }
 
-    public bool MovePossible()
+    public bool MoveNotPossible()
     {
-      return !GameBoard[Row, Col].Moves.Any();
+      //does the piece have no moves? True - False
+      if (!GameBoard[Row, Col].Moves.Any())
+      {
+        if (GameBoard[Row, Col].Jumps.Any())
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+      }
+      else
+      {
+        return false;
+      }
     }
 
-    public bool CheckValidPiece(int len)
+    public bool CheckValidPiece()
     {
       if (Row < 0 || Row > 7 || Col < 0 || Col > 7 || GameBoard[Row, Col] == null)
       {
@@ -222,13 +248,15 @@ namespace Checkers
      */
     public bool CheckDirections(Piece piecetocheck)
     {
+      piecetocheck.Jumps.Clear();
+      piecetocheck.Moves.Clear();
       if (piecetocheck.PieceType[0] == 'R' || piecetocheck.PieceType[1] == 'K')
       {
         foreach (int[] jump in JumpDirections)
         {
           try
           {
-            if (piecetocheck.Compare(GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt]))
+            if (piecetocheck.Compare(GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt], piecetocheck))
             {
               if (GameBoard[2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
               {
@@ -240,7 +268,6 @@ namespace Checkers
           }
           catch (IndexOutOfRangeException)
           {
-            continue;
           }
 
           try
@@ -253,17 +280,19 @@ namespace Checkers
           }
           catch (IndexOutOfRangeException)
           {
-            continue;
           }
         }
       }
+
+      // jumpdirections -1 -1 // -1 1
+
       if (piecetocheck.PieceType[0] == 'B' || piecetocheck.PieceType[1] == 'K')
       {
         foreach (int[] jump in JumpDirections)
         {
           try
           {
-            if (piecetocheck.Compare(GameBoard[-1 * jump[0] + piecetocheck.Row, 1 * jump[1] + piecetocheck.ColInt]))
+            if (piecetocheck.Compare(GameBoard[-1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt], piecetocheck))
             {
               if (GameBoard[-2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
               {
@@ -275,20 +304,18 @@ namespace Checkers
           }
           catch (IndexOutOfRangeException)
           {
-            continue;
           }
 
           try
           {
-            if (GameBoard[-1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt] == null)
+            if (GameBoard[-1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
             {
               GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
-                (new int[] { -1 * jump[0] + piecetocheck.Row, -1 * jump[1] + piecetocheck.ColInt });
+                (new int[] { -1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
             }
           }
           catch (IndexOutOfRangeException)
           {
-            continue;
           }
         }
       }
@@ -297,30 +324,25 @@ namespace Checkers
 
     public void GetRequiredJumps_Moves()
     {
-      JumpCoordinates.Clear();
-      if (Player == "Red")
+      JumpRequiredRed = false;
+      JumpRequiredBlack = false;
+      foreach (Piece red in Reds)
       {
-        foreach (Piece red in Reds)
+        GameBoard[red.Row, red.ColInt].Jumps.Clear();
+        GameBoard[red.Row, red.ColInt].Moves.Clear();
+        if (CheckDirections(red))
         {
-          GameBoard[red.Row, red.ColInt].Jumps.Clear();
-          GameBoard[red.Row, red.ColInt].Moves.Clear();
-          if (CheckDirections(red))
-          {
-            JumpCoordinates.Add(new int[] { red.Row, red.ColInt });
-          }
+          JumpRequiredRed = true;
         }
       }
 
-      if (Player == "Black")
+      foreach (Piece black in Blacks)
       {
-        foreach (Piece black in Blacks)
+        GameBoard[black.Row, black.ColInt].Jumps.Clear();
+        GameBoard[black.Row, black.ColInt].Moves.Clear();
+        if (CheckDirections(black))
         {
-          GameBoard[black.Row, black.ColInt].Jumps.Clear();
-          GameBoard[black.Row, black.ColInt].Moves.Clear();
-          if (CheckDirections(black))
-          {
-            JumpCoordinates.Add(new int[] { black.Row, black.ColInt });
-          }
+          JumpRequiredBlack = true;
         }
       }
     }

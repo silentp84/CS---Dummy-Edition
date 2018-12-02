@@ -43,13 +43,13 @@ namespace Checkers
       ID = id;
     }
 
-    public bool Compare(Piece other)
+    public bool Compare(Piece other, Piece origin)
     {
       if(other == null)
       {
         return false;
       }
-      return (other.PieceType[0] != this.PieceType[0]);
+      return (other.PieceType[0] != origin.PieceType[0]);
     }
   }
 }

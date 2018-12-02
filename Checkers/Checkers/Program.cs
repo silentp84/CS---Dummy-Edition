@@ -13,20 +13,39 @@ namespace Checkers
       Board gameBoard = new Board();
 
       bool game = true;
-      bool select;
-      bool move;
+      bool initial;
+      bool target;
       string cPair;
 
       while(game)
       {
-        select = false;
-        move = false;
-        while (!select)
+        initial = false;
+        target = false;
+        while (!initial)
         {
           PrintBoard(gameBoard);
           gameBoard.GetRequiredJumps_Moves();
           Console.WriteLine(gameBoard.Player + " player's turn: ");
           Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
+          /*Console.WriteLine("Black[5]" + gameBoard.Blacks[5].Row + " , " + gameBoard.Blacks[5].ColInt);
+          foreach (int [] x in gameBoard.Blacks[5].Moves)
+          {
+            Console.Write("Moves: ");
+            foreach (int y in x)
+            {
+              Console.Write(y + ",");
+            }
+            Console.WriteLine();
+          }
+          foreach (int [] x in gameBoard.Blacks[5].Jumps)
+          {
+            Console.Write("Jumps: ");
+            foreach (int y in x)
+            {
+              Console.Write(y + ",");
+            }
+            Console.WriteLine();
+          }*/
           cPair = Console.ReadLine();
           if (cPair.Length == 2)
           {
@@ -42,24 +61,24 @@ namespace Checkers
               continue;
             }
 
-            if (!gameBoard.CheckValidPiece(cPair.Length))
+            if (!gameBoard.CheckValidPiece()) //do the coordinates fit and is current player piece
             {
               Console.WriteLine("Invalid entry.");
               Console.ReadLine();
             }
-            else if (gameBoard.MoveRequiresJump())
+            else if (gameBoard.MoveRequiresJump()) // if you need to jump first
             {
-              Console.WriteLine("Invalid entry: You must select a piece that must make a jump.");
+              Console.WriteLine("Invalid entry: You must select a piece that first must make a jump.");
               Console.ReadLine();
             }
-            else if (gameBoard.MovePossible() && !gameBoard.MoveRequiresJump())
+            else if (gameBoard.MoveNotPossible())
             {
-              Console.WriteLine("Invalid entry: You must select a piece that has moves.");
+              Console.WriteLine("Invalid entry: You must select a piece that has moves or jumps.");
               Console.ReadLine();
             }
             else
             {
-              select = true;
+              initial = true;
             }
           }
           else
@@ -69,7 +88,7 @@ namespace Checkers
           }
         }
 
-        while (!move)
+        while (!target)
         {
           PrintBoard(gameBoard);
           Console.WriteLine(gameBoard.Player + " player's turn: ");
@@ -95,15 +114,14 @@ namespace Checkers
             }
             else
             {
-              move = gameBoard.MoveJump();
-              if (move)
+              target = gameBoard.MoveJump();
+              if (target)
               {
                 gameBoard.Swap();
               }
             }
           }
         }
-
       }
     }
 
