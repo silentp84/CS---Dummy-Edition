@@ -16,6 +16,8 @@ namespace Checkers
       bool initial;
       bool target;
       string cPair;
+      string newGame = " ";
+      string temp;
 
       while(game)
       {
@@ -27,25 +29,7 @@ namespace Checkers
           gameBoard.GetRequiredJumps_Moves();
           Console.WriteLine(gameBoard.Player + " player's turn: ");
           Console.WriteLine("Select a piece to move/jump by typing coordinates. (e.g. '5A')");
-          /*Console.WriteLine("Black[5]" + gameBoard.Blacks[5].Row + " , " + gameBoard.Blacks[5].ColInt);
-          foreach (int [] x in gameBoard.Blacks[5].Moves)
-          {
-            Console.Write("Moves: ");
-            foreach (int y in x)
-            {
-              Console.Write(y + ",");
-            }
-            Console.WriteLine();
-          }
-          foreach (int [] x in gameBoard.Blacks[5].Jumps)
-          {
-            Console.Write("Jumps: ");
-            foreach (int y in x)
-            {
-              Console.Write(y + ",");
-            }
-            Console.WriteLine();
-          }*/
+
           cPair = Console.ReadLine();
           if (cPair.Length == 2)
           {
@@ -115,11 +99,35 @@ namespace Checkers
             else
             {
               target = gameBoard.MoveJump();
+              if (gameBoard.CheckGameOver())
+              {
+                break;
+              }
               if (target)
               {
                 gameBoard.Swap();
               }
             }
+          }
+        }
+        if (gameBoard.CheckGameOver())
+        {
+          PrintBoard(gameBoard);
+          gameBoard.CheckWinner();
+          Console.WriteLine(gameBoard.Player + " wins!!!\n");
+          while(newGame != "Y" || newGame != "N")
+          {
+            Console.WriteLine("Another game? Y/N");
+            temp = Console.ReadLine();
+            newGame = temp.ToUpper();
+            if (newGame != "Y" && newGame != "N")
+            {
+              Console.WriteLine("Invalid input. Please enter Y or N.");
+            }
+          }
+          if (newGame == "N")
+          {
+            break;
           }
         }
       }
@@ -142,7 +150,7 @@ namespace Checkers
           }
           else
           {
-            Console.Write(layout.GameBoard[i, j].PieceType);
+            Console.Write(layout.GameBoard[i, j].Color + "" + layout.GameBoard[i,j].Type);
           }
           Console.Write("|");
         }

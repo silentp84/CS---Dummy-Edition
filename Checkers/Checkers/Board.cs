@@ -9,13 +9,11 @@ namespace Checkers
 {
   class Board
   {
-    // 0 empty 1 player 2 computer 3 player(king) 4 computer(king) from Piece class
-
-    public Piece[,] GameBoard { get; set; } //a multidimensional array of pieces
-    public List<Piece> Reds { get; set; }
-    public List<Piece> Blacks { get; set; }
-    public bool JumpRequiredBlack { get; set; }
-    public bool JumpRequiredRed { get; set; }
+    public Piece[,] GameBoard { get; set; }
+    private List<Piece> Reds { get; set; }
+    private List<Piece> Blacks { get; set; }
+    private bool JumpRequiredBlack { get; set; }
+    private bool JumpRequiredRed { get; set; }
     private List<int[]> JumpDirections { get; set; }
     public int Row;
     public int Col;
@@ -50,8 +48,8 @@ namespace Checkers
         {
           int index = row % 2 == 0 ? col + 1 + 8 * row : col + 8 * row;
 
-          Piece black = new Piece(row, index % 8, "BB", id);
-          Piece red = new Piece(7 - row, 7 - index % 8, "RR", id);
+          Piece black = new Piece(row, index % 8, 'B', 'B', id);
+          Piece red = new Piece(7 - row, 7 - index % 8, 'R', 'R', id);
           GameBoard[black.Row, black.ColInt] = black;
           Blacks.Add(black);
           GameBoard[red.Row, red.ColInt] = red;
@@ -61,38 +59,104 @@ namespace Checkers
       }
     }
 
-    //Check validate location
+    public void GetRequiredJumps_Moves()
+    {
+      JumpRequiredRed = false;
+      JumpRequiredBlack = false;
+      foreach (Piece red in Reds)
+      {
+        GameBoard[red.Row, red.ColInt].Jumps.Clear();
+        GameBoard[red.Row, red.ColInt].Moves.Clear();
+        if (CheckDirections(red))
+        {
+          JumpRequiredRed = true;
+        }
+      }
 
-    /*
-     * Parameter should include the coordinate to be checked and a list of required jumps
-     * Get the row and column and check if the piece/location is valid (if it's its own color)
-     * Maybe return the type of the location
-     */
+      foreach (Piece black in Blacks)
+      {
+        GameBoard[black.Row, black.ColInt].Jumps.Clear();
+        GameBoard[black.Row, black.ColInt].Moves.Clear();
+        if (CheckDirections(black))
+        {
+          JumpRequiredBlack = true;
+        }
+      }
+    }
 
-    //Check location move
-    /*
-     * Take a coordinate pair that checks the upleft,upright,downleft,downright
-     * If the coordinate pair causes the check to be out of bounds or is a player piece then return false
-     * If the location is an opponent check for a possible jump (call check jump)
-     * If the location is empty return true
-     * /
+    public bool CheckDirections(Piece piecetocheck)
+    {
+      piecetocheck.Jumps.Clear();
+      piecetocheck.Moves.Clear();
+      if (piecetocheck.Color == 'R' || piecetocheck.Type == 'K')
+      {
+        foreach (int[] jump in JumpDirections)
+        {
+          try
+          {
+            if (piecetocheck.Compare(GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt], piecetocheck))
+            {
+              if (GameBoard[2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
+              {
+                GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
+                (new int[] { 2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
+                return true;
+              }
+            }
+          }
+          catch (IndexOutOfRangeException)
+          {
+          }
 
-    //Check required jump
+          try
+          {
+            if (GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
+            {
+              GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
+                (new int[] { jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
+            }
+          }
+          catch (IndexOutOfRangeException)
+          {
+          }
+        }
+      }
 
-    //Move
-    /*
-     * Check if there needs to be jump and return coordinates (required jump)
-     * Get the piece type (call validate location with any required jumps)
-     *    If the entered location is not valid => kick it back out
-     * (call location move) based on the type of piece
-     *    Two calls for:
-     *      -one to address a normal piece
-     *        cycle through (call location moves for upleft/upright (red) or downleft/downright (black))
-     *    Four calls total for:
-     *      -the other to address a king piece
-     *        cycle through (call location moves for remainder of moves)
-     * If it's true display the location as a possible move
-     */
+      if (piecetocheck.Color == 'B' || piecetocheck.Type == 'K')
+      {
+        foreach (int[] jump in JumpDirections)
+        {
+          try
+          {
+            if (piecetocheck.Compare(GameBoard[-1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt], piecetocheck))
+            {
+              if (GameBoard[-2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
+              {
+                GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
+                (new int[] { -2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
+                return true;
+              }
+            }
+          }
+          catch (IndexOutOfRangeException)
+          {
+          }
+
+          try
+          {
+            if (GameBoard[-1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
+            {
+              GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
+                (new int[] { -1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
+            }
+          }
+          catch (IndexOutOfRangeException)
+          {
+          }
+        }
+      }
+      return false;
+    }
 
     public void Swap()
     {
@@ -118,8 +182,6 @@ namespace Checkers
       }
       else
       {
-        Console.Write("I broke.");
-        Console.Read();
         return false;
       }
     }
@@ -129,8 +191,17 @@ namespace Checkers
       Piece temp = GameBoard[Row, Col];
       temp.Row = TargetRow;
       temp.ColInt = TargetCol;
+      if (temp.Row == 0 && temp.Color=='R')
+      {
+        temp.Type = 'K';
+      }
+      if (temp.Row == 7 && temp.Color == 'B')
+      {
+        temp.Type = 'K';
+      }
       GameBoard[TargetRow, TargetCol] = temp;
       GameBoard[Row, Col] = null;
+      
       return true;
     }
 
@@ -139,10 +210,20 @@ namespace Checkers
       Piece temp = GameBoard[Row, Col];
       temp.Row = TargetRow;
       temp.ColInt = TargetCol;
+      if (temp.Row == 0 && temp.Color == 'R')
+      {
+        temp.Type = 'K';
+      }
+      if (temp.Row == 7 && temp.Color == 'B')
+      {
+        temp.Type = 'K';
+      }
       GameBoard[TargetRow, TargetCol] = temp;
       GameBoard[Row, Col] = null;
       DeletePiece();
       GameBoard[(Row + TargetRow) / 2, (Col + TargetCol) / 2] = null;
+      Row = TargetRow;
+      Col = TargetCol;
       GetRequiredJumps_Moves();
       return (!GameBoard[TargetRow, TargetCol].Jumps.Any());
     }
@@ -151,23 +232,27 @@ namespace Checkers
     {
       if (Player == "Red")
       {
+        Remove = 0;
         foreach (Piece black in Blacks)
         {
           if (GameBoard[(Row + TargetRow) / 2, (Col + TargetCol) / 2].ID == black.ID)
           {
-            Remove = black.ID;
+            break;
           }
+          Remove++;
         }
         Blacks.RemoveAt(Remove);
       }
       else if (Player == "Black")
       {
+        Remove = 0;
         foreach (Piece red in Reds)
         {
           if (GameBoard[(Row + TargetRow) / 2, (Col + TargetCol) / 2].ID == red.ID)
           {
-            Remove = red.ID;
+            break;
           }
+          Remove++;
         }
         Reds.RemoveAt(Remove);
       }
@@ -230,7 +315,7 @@ namespace Checkers
         return false;
       }
 
-      if (GameBoard[Row, Col].PieceType[0] == Player[0])
+      if (GameBoard[Row, Col].Color == Player[0])
       {
 
         return true;
@@ -241,111 +326,53 @@ namespace Checkers
       }
     }
 
+    public bool CheckGameOver()
+    {
+      return (!Reds.Any() || !Blacks.Any());
+    }
+
+    public void CheckWinner()
+    {
+      Player = !Reds.Any() ? "Black" : "Red";
+    }
     //Check Jump
     /*
      * Take a (coordinate pair X 2) that checks the jump possibility
      * 
      */
-    public bool CheckDirections(Piece piecetocheck)
-    {
-      piecetocheck.Jumps.Clear();
-      piecetocheck.Moves.Clear();
-      if (piecetocheck.PieceType[0] == 'R' || piecetocheck.PieceType[1] == 'K')
-      {
-        foreach (int[] jump in JumpDirections)
-        {
-          try
-          {
-            if (piecetocheck.Compare(GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt], piecetocheck))
-            {
-              if (GameBoard[2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
-              {
-                GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
-                (new int[] { 2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
-                return true;
-              }
-            }
-          }
-          catch (IndexOutOfRangeException)
-          {
-          }
 
-          try
-          {
-            if (GameBoard[jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
-            {
-              GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
-                (new int[] { jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
-            }
-          }
-          catch (IndexOutOfRangeException)
-          {
-          }
-        }
-      }
+    //Check validate location
 
-      // jumpdirections -1 -1 // -1 1
+    /*
+     * Parameter should include the coordinate to be checked and a list of required jumps
+     * Get the row and column and check if the piece/location is valid (if it's its own color)
+     * Maybe return the type of the location
+     */
 
-      if (piecetocheck.PieceType[0] == 'B' || piecetocheck.PieceType[1] == 'K')
-      {
-        foreach (int[] jump in JumpDirections)
-        {
-          try
-          {
-            if (piecetocheck.Compare(GameBoard[-1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt], piecetocheck))
-            {
-              if (GameBoard[-2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt] == null)
-              {
-                GameBoard[piecetocheck.Row, piecetocheck.ColInt].Jumps.Add
-                (new int[] { -2 * jump[0] + piecetocheck.Row, 2 * jump[1] + piecetocheck.ColInt });
-                return true;
-              }
-            }
-          }
-          catch (IndexOutOfRangeException)
-          {
-          }
+    //Check location move
+    /*
+     * Take a coordinate pair that checks the upleft,upright,downleft,downright
+     * If the coordinate pair causes the check to be out of bounds or is a player piece then return false
+     * If the location is an opponent check for a possible jump (call check jump)
+     * If the location is empty return true
+     * /
 
-          try
-          {
-            if (GameBoard[-1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt] == null)
-            {
-              GameBoard[piecetocheck.Row, piecetocheck.ColInt].Moves.Add
-                (new int[] { -1 * jump[0] + piecetocheck.Row, jump[1] + piecetocheck.ColInt });
-            }
-          }
-          catch (IndexOutOfRangeException)
-          {
-          }
-        }
-      }
-      return false;
-    }
+    //Check required jump
 
-    public void GetRequiredJumps_Moves()
-    {
-      JumpRequiredRed = false;
-      JumpRequiredBlack = false;
-      foreach (Piece red in Reds)
-      {
-        GameBoard[red.Row, red.ColInt].Jumps.Clear();
-        GameBoard[red.Row, red.ColInt].Moves.Clear();
-        if (CheckDirections(red))
-        {
-          JumpRequiredRed = true;
-        }
-      }
-
-      foreach (Piece black in Blacks)
-      {
-        GameBoard[black.Row, black.ColInt].Jumps.Clear();
-        GameBoard[black.Row, black.ColInt].Moves.Clear();
-        if (CheckDirections(black))
-        {
-          JumpRequiredBlack = true;
-        }
-      }
-    }
+    //Move
+    /*
+     * Check if there needs to be jump and return coordinates (required jump)
+     * Get the piece type (call validate location with any required jumps)
+     *    If the entered location is not valid => kick it back out
+     * (call location move) based on the type of piece
+     *    Two calls for:
+     *      -one to address a normal piece
+     *        cycle through (call location moves for upleft/upright (red) or downleft/downright (black))
+     *    Four calls total for:
+     *      -the other to address a king piece
+     *        cycle through (call location moves for remainder of moves)
+     * If it's true display the location as a possible move
+     */
 
     //Jump
 
