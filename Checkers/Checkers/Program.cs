@@ -129,6 +129,10 @@ namespace Checkers
           {
             break;
           }
+          if (newGame == "Y")
+          {
+            gameBoard.Reset();
+          }
         }
       }
     }
