@@ -41,6 +41,12 @@ namespace Checkers
 
     public void Reset()
     {
+      Reds.Clear();
+      Blacks.Clear();
+      JumpRequiredRed = false;
+      JumpRequiredBlack = false;
+      Player = "Red";
+      Array.Clear(GameBoard, 0, GameBoard.Length);
       int id = 0;
       for (int row = 0; row < 3; row++)
       {
